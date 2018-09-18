@@ -213,22 +213,9 @@
 
 	<repositories>
 		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>central</id>
-			<name>Maven Repository Switchboard</name>
-			<url>http://repo2.maven.org/maven2</url>
-		</repository>
-		<repository>
 			<id>zxhc-release</id>
 			<name>zxhc-release</name>
 			<url>http://10.148.83.221:8091/artifactory/libs-release-local</url>
-		</repository>
-		<repository>
-			<id>zxhc-snapshots</id>
-			<name>zxhc-snapshots</name>
-			<url>http://10.148.83.221:8091/artifactory/libs-snapshot-local</url>
 		</repository>
 	</repositories>
 </project>

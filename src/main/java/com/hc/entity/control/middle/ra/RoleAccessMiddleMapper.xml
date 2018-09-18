@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.control.middle.ra.RoleAccessMiddleMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.control.middle.ra.RoleAccessMiddleKey" >
+  	<id column="r_rid" property="rid" jdbcType="INTEGER" />
+   	<result column="r_name" property="name" jdbcType="VARCHAR" />
+  	<association property="access" column="acid" javaType="com.hc.entity.control.access.AccessControl">
+    	<id column="ac_acid" property="acid" jdbcType="INTEGER" />
+  	    <result column="ac_name" property="name" jdbcType="VARCHAR" />
+  	</association>
+    <collection property="accesses" ofType="com.hc.entity.control.access.AccessControl">
+  	    <id column="acs_acid" property="acid" jdbcType="INTEGER" />
+  	    <result column="acs_name" property="name" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap>
+  
+  <sql id="Accesses_Column_List" >
+    r.rid r_rid, r.name r_name,
+    acs.acid acs_acid, acs.name acs_name
+  </sql>
+  
+  <select id="selectRoleAccesses" resultMap="BaseResultMap">
+    select 
+    <include refid="Accesses_Column_List" />
+    from control_role_access_middle ram
+    left join control_role r on r.rid = ram.rid
+    left join control_access acs on acs.acid = ram.acid
+  </select>
+  
+  <insert id="insertRoleAccessBatch" parameterType="java.util.List">
+    insert into control_role_access_middle (rid, acid)
+      values
+      <foreach collection="ras"  item="ra" separator=",">
+      	  <choose>
+	      	  <when test="ra.acids != null and ra.acids.size() > 0">
+	      	     <foreach collection="ra.acids"  item="item" separator=",">
+				   (#{ra.rid,jdbcType=INTEGER},
+				   #{item,jdbcType=INTEGER})
+		    	 </foreach>
+	      	  </when>
+      	  </choose>
+      </foreach>
+  </insert>
+  
+  <delete id="deleteRoleAccessBatch" parameterType="java.util.List">
+  	delete from control_role_access_middle
+  	<where>
+	    <if test="rids.size()==0">1=0</if>
+	    <if test="rids.size() > 0">
+	        rid in
+	    	<foreach collection="rids" item="item" open="(" separator="," close=")">  
+	       	 	#{item}
+	    	</foreach>
+	    </if>
+    </where>
+  </delete>
+  
+</mapper>

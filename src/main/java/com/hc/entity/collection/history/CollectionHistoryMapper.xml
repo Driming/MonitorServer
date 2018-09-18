@@ -1,0 +1,714 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.collection.history.CollectionHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.collection.history.CollectionHistory" >
+    <id column="ctid" property="ctid" jdbcType="VARCHAR" />
+    <id column="csid" property="csid" jdbcType="VARCHAR" />
+    <id column="time" property="time" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="dataSourceNum" property="dataSourceNum" jdbcType="INTEGER" />
+    <result column="dataSourceSize" property="dataSourceSize" jdbcType="BIGINT" />
+    <result column="dataResultNum" property="dataResultNum" jdbcType="INTEGER" />
+    <result column="dataResultSize" property="dataResultSize" jdbcType="BIGINT" />
+    <result column="timeStart" property="timeStart" jdbcType="BIGINT" />
+    <result column="timeEnd" property="timeEnd" jdbcType="BIGINT" />
+    <result column="delay" property="delay" jdbcType="BIGINT" />
+    <result column="retry" property="retry" jdbcType="INTEGER" />
+    <association property="ct" javaType="com.hc.entity.collection.task.CollectionTask">
+	    <id column="ct_ctid" property="ctid" jdbcType="VARCHAR" />
+	    <id column="ct_csid" property="csid" jdbcType="VARCHAR" />
+	    <result column="ct_name" property="name" jdbcType="VARCHAR" />
+	    <result column="ct_label" property="label" jdbcType="VARCHAR" />
+	    <association property="cs" javaType="com.hc.entity.collection.server.CollectionServer">
+	    	<id column="cs_csid" property="csid" jdbcType="VARCHAR" />
+		    <result column="cs_server" property="server" jdbcType="VARCHAR" />	
+		    <result column="cs_description" property="description" jdbcType="VARCHAR" />
+	    </association>
+	    <association property="ca" javaType="com.hc.entity.collection.application.CollectionApplication">
+			<id column="ca_egName" property="egName" jdbcType="VARCHAR" />
+		    <id column="ca_version" property="version" jdbcType="VARCHAR" />
+		    <result column="ca_chName" property="chName" jdbcType="VARCHAR" />
+		    <result column="ca_author" property="author" jdbcType="VARCHAR" />
+		    <result column="ca_description" property="description" jdbcType="VARCHAR" />
+		    <result column="ca_minVersion" property="minVersion" jdbcType="INTEGER" />
+	    </association>
+    </association>
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.hc.entity.collection.history.CollectionHistory" extends="BaseResultMap" >
+    <result column="errors" property="errors" jdbcType="LONGVARCHAR" javaType="java.util.List"/>
+  </resultMap>
+  
+  <resultMap id="ResultOneNode" type="com.hc.entity.collection.history.extra.StatusPercent$OneNode">
+   	<result column="statusName" property="statusName" jdbcType="VARCHAR" />
+   	<result column="percent" property="percent" jdbcType="REAL" />
+   	<result column="time" property="time" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap id="PageInfoResultMap" type="com.hc.vo.TaskHistoryPageInfoVo">
+   	<result column="starttime" property="starttime" jdbcType="BIGINT"/>
+   	<result column="endtime" property="endtime" jdbcType="BIGINT" />
+   	<result column="errPercent" property="errPercent" jdbcType="REAL"/>
+   	<result column="currentPage" property="currentPage" jdbcType="INTEGER"/>
+  </resultMap>
+  
+  <resultMap id="TaskScheduleResultMap" type="com.hc.entity.collection.history.extra.TaskSchedule">
+   	<result column="nodeResult" property="nodeResult" jdbcType="INTEGER"/>
+   	<result column="node" property="node" jdbcType="INTEGER"/>
+  </resultMap>
+  
+  <resultMap id="ResultStandardMap"   type="HashMap">  
+    <result property="key" column="csid" />  
+    <result property="value" column="time" />  
+  </resultMap>  
+  
+  <sql id="Base_Column_List" >
+    ch.ctid, ch.csid, ch.time, ch.status,
+    ch.dataSourceNum, ch.dataSourceSize, ch.dataResultNum, 
+    ch.dataResultSize, ch.delay, ch.retry, ch.timeStart, ch.timeEnd,
+    ct.ctid ct_ctid, ct.csid ct_csid,
+    ct.name ct_name, ct.label ct_label,
+    cs.csid cs_csid, cs.server cs_server,
+    cs.description cs_description,
+    ca.egName ca_egName, ca.version ca_version, ca.chName ca_chName,
+    ca.author ca_author, ca.description ca_description,
+    ca.minVersion ca_minVersion
+  </sql>
+  
+  <sql id="TTs_Column_List" >
+    ch.ctid, ch.csid, ch.time, ch.status,
+    ch.dataSourceNum, ch.dataSourceSize, ch.dataResultNum, 
+    ch.dataResultSize, ch.delay, ch.retry, ch.timeStart, ch.timeEnd,
+    ct.ctid ct_ctid, ct.csid ct_csid,
+    ct.name ct_name, ct.label ct_label,
+    ct.caName ca_egName, ct.caVersion ca_version,
+    ct.csid cs_csid
+  </sql>
+  
+  <sql id="TTs2_Column_List" >
+    ch.ctid, ch.csid, ch.time,
+    ch.dataSourceNum, ch.dataSourceSize, ch.dataResultNum, 
+    ch.dataResultSize, ch.delay, ch.retry, ch.timeStart, ch.timeEnd,
+    ct.ctid ct_ctid, ct.csid ct_csid,
+    ct.name ct_name, ct.label ct_label,
+    ct.caName ca_egName, ct.caVersion ca_version,
+    ct.csid cs_csid
+  </sql>
+  
+  <sql id="Blob_Column_List" >
+    ch.errors
+  </sql>
+  
+  <select id="selectAllServerMaxTime" resultMap="ResultStandardMap">
+    select 
+    csid,
+   	max(ctime) time
+    from collection_history
+    group by csid
+  </select>
+  
+  <select id="selectCollectionHistory" resultMap="ResultMapWithBLOBs">
+    select 
+   	<include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+    left join collection_application ca on
+    (ct.caName = ca.egName and ct.caVersion = ca.version)
+    left join collection_server cs on ct.csid = cs.csid
+   	where
+   		ch.ctid = #{ctid,jdbcType=VARCHAR}
+   		and ch.csid = #{csid,jdbcType=VARCHAR}
+   		and ch.time = #{time,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectCollectionHistorys" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+    left join collection_application ca on
+    (ct.caName = ca.egName and ct.caVersion = ca.version)
+    left join collection_server cs on ct.csid = cs.csid
+    <where>
+    	1=1
+  		<if test="ctid != null">
+		   and ch.ctid = #{ctid,jdbcType=VARCHAR}
+  		</if>
+  		<if test="csid != null">
+  		   and ch.csid = #{csid,jdbcType=VARCHAR}
+  		</if>
+  	    <choose>
+	    	<when test="hasError == true">
+	    		and (ch.errors is not null and length(ch.errors) > 0)
+	    	</when>
+	    	<when test="hasError == false">
+	    		and (ch.errors is null or length(trim(ch.errors)) = 0)
+	    	</when>
+	    </choose>
+    </where>
+    order by ch.time desc
+  </select>
+  
+  <select id="selectTotalTaskHistorysByCt" resultType="java.lang.Integer">
+    select 
+    count(*)
+    from collection_history
+    <where>
+    	1=1
+  		<if test="ctid != null">
+		   and ctid = #{ctid,jdbcType=VARCHAR}
+  		</if>  
+  		<if test="csid != null">
+		   and csid = #{csid,jdbcType=VARCHAR}
+  		</if>  
+    </where>
+  </select>
+  
+  <select id="selectTaskHistorysStandardPageInfo" resultMap="PageInfoResultMap">
+  	set @index := -1;
+    select 
+    min(ch2.time) starttime,
+    max(ch2.time) endtime,
+    count(*) errPercent,
+    floor(ch2.num / #{pageSize,jdbcType=INTEGER}) + 1 currentPage
+    from 
+    (select @index := @index+1 num, ch.time time from collection_history ch
+    <where>
+    	1=1
+  		<if test="ctid != null">
+		   and ch.ctid = #{ctid,jdbcType=VARCHAR}
+  		</if>  
+  		<if test="csid != null">
+  		   and ch.csid = #{csid,jdbcType=VARCHAR}	
+  		</if>
+    </where>
+    order by ch.time desc
+    ) ch2
+    group by floor(ch2.num / #{pageSize,jdbcType=INTEGER}) + 1 
+    order by floor(ch2.num / #{pageSize,jdbcType=INTEGER}) + 1 
+  </select>
+  
+  <select id="selectTaskHistorysErrorNumPageInfo" resultMap="PageInfoResultMap">
+  	set @index := -1;
+    select 
+    count(*) errPercent,
+    floor(ch2.num / #{pageSize,jdbcType=INTEGER}) + 1 currentPage
+    from
+    (select @index := @index+1 num, ch.time time,
+	 ch.status status    
+     from collection_history ch
+    <where>
+    	1=1
+  		<if test="ctid != null">
+		   and ch.ctid = #{ctid,jdbcType=VARCHAR}
+  		</if>  
+  		<if test="csid != null">
+  		   and ch.csid = #{csid,jdbcType=VARCHAR}
+  		</if>
+    </where>
+    order by ch.time desc
+    ) ch2
+    <where>
+    	ch2.status != 'complete'
+    </where>
+    group by floor(ch2.num / #{pageSize,jdbcType=INTEGER}) + 1 
+    order by floor(ch2.num / #{pageSize,jdbcType=INTEGER}) + 1
+  </select>
+  
+  <select id="selectTaskHistoryPageByMultiCondition" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="TTs2_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    ,
+    replace(replace(replace(ch.status, 'source_incomplete', '数据源缺失'),
+    'result_incomplete', '数据结果缺失'), 'complete', '成功') status
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+    <where>
+    <if test="csids != null and csids.size() > 0">
+    	ch.csid in
+    	<foreach collection="csids" item="item" open="(" separator="," close=") and">  
+		    #{item}
+		</foreach>
+    </if>
+    <if test="cas != null and cas.size() > 0">
+    	<foreach collection="cas" item="item" open="(" separator="or" close=") and">  
+		    (ct.caName = #{item.egName} and ct.caVersion = #{item.version})
+		</foreach>
+    </if>
+    <if test="cts != null and cts.size() > 0">
+    	<foreach collection="cts" item="item" open="(" separator="or" close=") and">  
+		    (ct.ctid = #{item.ctid} and ct.csid = #{item.csid})
+		</foreach>
+    </if>
+    <if test="statuss != null and statuss.size() > 0">
+    	ch.status in
+    	<foreach collection="statuss" item="item" open="(" separator="," close=") and">  
+		    replace(replace(replace(#{item}, "成功", "complete"),
+		    "数据源缺失", "source_incomplete"),
+		    "处理结果缺失", "result_incomplete")
+		</foreach>
+    </if>
+    <if test="labels != null and labels.size() > 0">
+    	ct.label in
+    	<foreach collection="labels" item="item" open="(" separator="," close=") and">  
+		    #{item}
+		</foreach>
+    </if>
+    ch.time between #{starttime,jdbcType=BIGINT}
+    and #{endtime,jdbcType=BIGINT}
+    <if test="startDelay != null">
+   		and ch.delay &gt;= #{startDelay,jdbcType=INTEGER}
+    </if>
+    <if test="endDelay != null">
+   		and ch.delay &lt;= #{endDelay,jdbcType=INTEGER}
+    </if>
+   </where>
+    order by ch.time desc
+  </select>
+  
+  <insert id="insertCollectionHistory" useGeneratedKeys="true" keyProperty="chid" parameterType="com.hc.entity.collection.history.CollectionHistory" >
+    insert into collection_history (time, status, 
+      dataSourceNum, dataSourceSize, dataResultNum, 
+      dataResultSize, errors, ctid, csid, ctime,
+      timeStart, timeEnd
+      <if test="delay != null">
+      	, delay
+      </if>
+      <if test="retry != null">
+      	, retry
+      </if>)	
+    values (#{time,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}, 
+      #{dataSourceNum,jdbcType=INTEGER}, #{dataSourceSize,jdbcType=BIGINT},
+      #{dataResultNum,jdbcType=INTEGER}, #{dataResultSize,jdbcType=BIGINT},
+      #{errors,jdbcType=LONGVARCHAR,javaType=java.util.List},
+      #{ctid,jdbcType=VARCHAR}, #{csid,jdbcType=VARCHAR},
+      #{ctime,jdbcType=BIGINT}, #{timeStart,jdbcType=BIGINT},
+      #{timeEnd,jdbcType=BIGINT}
+      <if test="delay != null">
+      	, #{delay,jdbcType=INTEGER}
+      </if>
+      <if test="retry != null">
+      	, #{retry,jdbcType=INTEGER}
+      </if>)
+  </insert>
+  
+  <insert id="upsert" parameterType="com.hc.entity.collection.history.CollectionHistory" >
+    insert into collection_history (time, status, 
+      dataSourceNum, dataSourceSize, dataResultNum, 
+      dataResultSize, errors, ctid, csid, ctime,
+      timeStart, timeEnd, delay, retry)	
+    values (#{time,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}, 
+      #{dataSourceNum,jdbcType=INTEGER}, #{dataSourceSize,jdbcType=BIGINT},
+      #{dataResultNum,jdbcType=INTEGER}, #{dataResultSize,jdbcType=BIGINT},
+      #{errors,jdbcType=LONGVARCHAR,javaType=java.util.List},
+      #{ctid,jdbcType=VARCHAR}, #{csid,jdbcType=VARCHAR},
+      #{ctime,jdbcType=BIGINT}, #{timeStart,jdbcType=BIGINT},
+      #{timeEnd,jdbcType=BIGINT}, #{delay,jdbcType=INTEGER},
+      #{retry,jdbcType=INTEGER})
+    on duplicate key update
+      status = #{status,jdbcType=VARCHAR},
+      dataSourceNum = #{dataSourceNum,jdbcType=INTEGER},
+      dataSourceSize = #{dataSourceSize,jdbcType=BIGINT},
+      dataResultNum = #{dataResultNum,jdbcType=INTEGER},
+      dataResultSize = #{dataResultSize,jdbcType=BIGINT},
+      errors = #{errors,jdbcType=LONGVARCHAR},
+      delay = #{delay,jdbcType=VARCHAR},
+      retry = #{retry,jdbcType=VARCHAR},
+      ctime = #{ctime,jdbcType=BIGINT},
+      timeStart = #{timeStart,jdbcType=BIGINT},
+      timeEnd = #{timeEnd,jdbcType=BIGINT}
+  </insert>
+  
+  <update id="updateCollectionHistorySelective" parameterType="com.hc.entity.collection.history.CollectionHistory" >
+    update collection_history
+    <set >
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="dataSourceNum != null" >
+        dataSourceNum = #{dataSourceNum,jdbcType=INTEGER},
+      </if>
+      <if test="dataSourceSize != null" >
+        dataSourceSize = #{dataSourceSize,jdbcType=BIGINT},
+      </if>
+      <if test="dataResultNum != null" >
+        dataResultNum = #{dataResultNum,jdbcType=INTEGER},
+      </if>
+      <if test="dataResultSize != null" >
+        dataResultSize = #{dataResultSize,jdbcType=BIGINT},
+      </if>
+      <if test="errors != null" >
+        errors = #{errors,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="delay != null" >
+        delay = #{delay,jdbcType=VARCHAR},
+      </if>
+      <if test="retry != null" >
+        retry = #{retry,jdbcType=VARCHAR},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=BIGINT},
+      </if>
+      <if test="timeStart != null" >
+        timeStart = #{timeStart,jdbcType=BIGINT},
+      </if>
+      <if test="timeEnd != null" >
+        timeEnd = #{timeEnd,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ctid = #{ctid,jdbcType=VARCHAR}
+    and csid = #{csid,jdbcType=VARCHAR}
+    and time = #{time,jdbcType=BIGINT}
+  </update>
+  
+  <update id="updateCollectionHistoryLabels" parameterType="java.lang.String" >
+    update collection_history
+    set label = #{label,jdbcType=VARCHAR}
+    where ctid = #{ctid,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectAndCalcTaskHistoryStatusPercent" resultMap="ResultOneNode">
+    select ch.status statusName,
+    count(*)/(select count(*)
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+    where ch.ctime >= (#{milli,jdbcType=REAL} - 1000*60*60*24)
+    <if test="label != null">
+		and ct.label = #{label,jdbcType=VARCHAR}
+	</if>
+	)*100 percent
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+	where ch.ctime >= (#{milli,jdbcType=REAL} - 1000*60*60*24)
+	<if test="label != null">
+		and ct.label = #{label,jdbcType=VARCHAR}
+	</if>
+	group by ch.status
+  </select>
+  
+  <select id="selectTotalApplicationTaskHistoryResult" resultMap="ResultMapWithBLOBs">
+    select  
+    ch.ctid, ch.csid,
+    cs.server cs_server, ca.egName ca_egName, ct.name ct_name,
+    sum(ch.dataResultNum) dataResultNum,
+    sum(ch.dataResultSize) dataResultSize
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+    left join collection_application ca on
+    (ct.caName = ca.egName and ct.caVersion = ca.version)
+    left join collection_server cs on ct.csid = cs.csid
+    <where>
+    	<if test = "label != null">
+    		ct.label = #{label,jdbcType=VARCHAR} and
+    	</if>
+    	<choose>
+	    	<when test="type.getType() == 'years'">
+	    		ch.ctime >= 0
+	    	</when>
+    		<otherwise>
+    			ch.ctime >= #{starttime,jdbcType=BIGINT}
+    		</otherwise>
+    	</choose>
+    </where>
+    group by ch.ctid, ch.csid
+	order by 
+	<choose>
+		<when test="order == 'size'">
+			dataResultSize desc
+		</when>
+		<otherwise>
+			dataResultNum desc
+		</otherwise>
+	</choose>
+	limit #{size,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectTaskHistoryResultNumAndSize" resultMap="ResultMapWithBLOBs">
+    select
+    floor(ch.ctime/(#{interval,jdbcType=INTEGER}*60*1000)) idx,
+    ch.ctime - mod(ch.ctime, #{interval,jdbcType=INTEGER}*60*1000) time,
+    sum(ch.dataResultNum) dataResultNum, 
+    sum(ch.dataResultSize) dataResultSize
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+	<where>
+		<if test = "label != null">
+			ct.label = #{label,jdbcType=VARCHAR} and
+		</if>
+		ctime 
+		between 
+		#{starttime,jdbcType=BIGINT}
+		and
+	    #{endtime,jdbcType=BIGINT}
+	</where>
+	group by idx
+	order by ctime asc
+  </select>
+  
+  <select id="selectTaskHistoryResultNumAndSizeByHistoryTime" resultMap="ResultMapWithBLOBs">
+    select
+    <choose>
+    	<when test="type.getType() == 'day'">
+    		day(FROM_UNIXTIME(ch.ctime/1000)),
+    		hour(FROM_UNIXTIME(ch.ctime/1000)),
+    		ch.ctime time,
+    	</when>
+    	<when test="type.getType() == 'month'">
+    		month(FROM_UNIXTIME(ch.ctime/1000)),
+    		day(FROM_UNIXTIME(ch.ctime/1000)),
+    		ch.ctime time,
+    	</when>
+    	<when test="type.getType() == 'year'">
+    		year(FROM_UNIXTIME(ch.ctime/1000)),
+    		month(FROM_UNIXTIME(ch.ctime/1000)),
+    		ch.ctime time,
+    	</when>
+    	<otherwise>
+    		year(FROM_UNIXTIME(ch.ctime/1000)),
+    		ch.ctime time,
+    	</otherwise>
+    </choose>
+    sum(ch.dataResultNum) dataResultNum, 
+    sum(ch.dataResultSize) dataResultSize
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+    <where>
+    	<if test="label != null">
+    		ct.label = #{label,jdbcType=VARCHAR} and
+    	</if>
+    	<choose>
+	    	<when test="type.getType() == 'day'">
+	    		ch.ctime >= #{milli,jdbcType=BIGINT} - 24*60*60*1000
+	    	</when>
+	    	<when test="type.getType() == 'month'">
+    			ch.ctime >= #{milli,jdbcType=BIGINT} - 30*24*60*60*1000
+    		</when>
+    		<when test="type.getType() == 'year'">
+    			ch.ctime >= #{milli,jdbcType=BIGINT} - 366*24*60*60*1000
+    		</when>
+    		<otherwise>
+    			ch.ctime >= 0
+    		</otherwise>
+    	</choose>
+    </where>
+	group by
+	<choose>
+    	<when test="type.getType() == 'day'">
+    		day(FROM_UNIXTIME(ch.ctime/1000)),
+    		hour(FROM_UNIXTIME(ch.ctime/1000))
+    	</when>
+    	<when test="type.getType() == 'month'">
+    		month(FROM_UNIXTIME(ch.ctime/1000)),
+    		day(FROM_UNIXTIME(ch.ctime/1000))
+    	</when>
+    	<when test="type.getType() == 'year'">
+    		year(FROM_UNIXTIME(ch.ctime/1000)),
+    		month(FROM_UNIXTIME(ch.ctime/1000))
+    	</when>
+    	<otherwise>
+    		year(FROM_UNIXTIME(ch.ctime/1000))
+    	</otherwise>
+   	</choose>
+	order by ch.ctime asc
+  </select> 
+  
+  <select id="selectTaskHistoryStatusPercentByTimeNodes" resultMap="ResultOneNode">
+    select ch.status statusName,
+    <choose>
+    	<when test="type.getType() == 'day'">
+    		hour(FROM_UNIXTIME(ch.time/1000)) time,
+    	</when>
+    	<when test="type.getType() == 'month'">
+    		day(FROM_UNIXTIME(ch.time/1000)) time,
+    	</when>
+    	<when test="type.getType() == 'year'">
+    		month(FROM_UNIXTIME(ch.time/1000)) time,
+    	</when>
+    	<otherwise>
+    		year(FROM_UNIXTIME(ch.time/1000)) time,
+    	</otherwise>
+    </choose>
+    count(*) percent
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+    <where>
+    	<if test="label != null">
+    		ct.label = #{label,jdbcType=VARCHAR} and
+    	</if>
+    	<choose>
+	    	<when test="type.getType() == 'day'">
+	    		ch.time > #{milli,jdbcType=BIGINT} - 24*60*60*1000
+	    	</when>
+	    	<when test="type.getType() == 'month'">
+    			ch.time > #{milli,jdbcType=BIGINT} - 30*24*60*60*1000
+    		</when>
+    		<when test="type.getType() == 'year'">
+    			ch.time > #{milli,jdbcType=BIGINT} - 365*24*60*60*1000
+    		</when>
+    		<otherwise>
+    			ch.time > 0
+    		</otherwise>
+    	</choose>
+    </where>
+	group by ch.status,
+	<choose>
+    	<when test="type.getType() == 'day'">
+    		hour(FROM_UNIXTIME(ch.time/1000))
+    	</when>
+    	<when test="type.getType() == 'month'">
+    		day(FROM_UNIXTIME(ch.time/1000))
+    	</when>
+    	<when test="type.getType() == 'year'">
+    		month(FROM_UNIXTIME(ch.time/1000))
+    	</when>
+    	<otherwise>
+    		year(FROM_UNIXTIME(ch.time/1000))
+    	</otherwise>
+   	</choose>
+	order by ch.status asc, ch.time asc
+  </select> 
+  
+  <select id="selectTaskHistoryStatusPercentSumByTimeNodes" resultMap="ResultOneNode">
+    select
+    <choose>
+    	<when test="type.getType() == 'day'">
+    		hour(FROM_UNIXTIME(ch.time/1000)) time,
+    	</when>
+    	<when test="type.getType() == 'month'">
+    		day(FROM_UNIXTIME(ch.time/1000)) time,
+    	</when>
+    	<when test="type.getType() == 'year'">
+    		month(FROM_UNIXTIME(ch.time/1000)) time,
+    	</when>
+    	<otherwise>
+    		year(FROM_UNIXTIME(ch.time/1000)) time,
+    	</otherwise>
+    </choose>
+    count(*) percent
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+     <where>
+    	<if test="label != null">
+    		ct.label = #{label,jdbcType=VARCHAR} and
+    	</if>
+    	<choose>
+	    	<when test="type.getType() == 'day'">
+	    		ch.time > #{milli,jdbcType=BIGINT} - 24*60*60*1000
+	    	</when>
+	    	<when test="type.getType() == 'month'">
+    			ch.time > #{milli,jdbcType=BIGINT} - 30*24*60*60*1000
+    		</when>
+    		<when test="type.getType() == 'year'">
+    			ch.time > #{milli,jdbcType=BIGINT} - 365*24*60*60*1000
+    		</when>
+    		<otherwise>
+    			ch.time > 0
+    		</otherwise>
+    	</choose>
+    </where>
+	group by
+	<choose>
+    	<when test="type.getType() == 'day'">
+    		hour(FROM_UNIXTIME(ch.time/1000))
+    	</when>
+    	<when test="type.getType() == 'month'">
+    		day(FROM_UNIXTIME(ch.time/1000))
+    	</when>
+    	<when test="type.getType() == 'year'">
+    		month(FROM_UNIXTIME(ch.time/1000))
+    	</when>
+    	<otherwise>
+    		year(FROM_UNIXTIME(ch.time/1000))
+    	</otherwise>
+   	</choose>
+	order by ch.time asc
+  </select>
+  
+  <select id="selectTaskHistoryInTaskSchedule" resultMap="TaskScheduleResultMap">
+     select
+      max(cast(replace(replace(replace(replace(ch.status,'deadline_exceeded', 3),
+	   'source_incomplete', 2),
+	   'result_incomplete', 1),
+	   'complete', 0) as signed)) nodeResult,
+	  ceil((ch.ctime - #{tsv.start,jdbcType=BIGINT}) /
+	  ceil((#{tsv.end,jdbcType=BIGINT} - #{tsv.start,jdbcType=BIGINT}) 
+	  / #{nodeSize,jdbcType=INTEGER})) node
+      from collection_history ch
+      left join collection_task ct on
+      (ch.ctid = ct.ctid and ch.csid = ct.csid)
+	  <where> 
+	 	<if test="label != null">
+	   		ct.label = #{label,jdbcType=VARCHAR} and
+	   	</if>
+	   	<if test="milli != null">
+	   		ch.ctime - mod(ch.ctime, 30*60*1000) =  #{milli,jdbcType=BIGINT} and
+	   	</if>
+	    (ch.ctid = #{tsv.ctid,jdbcType=VARCHAR} and ch.csid = #{tsv.csid,jdbcType=VARCHAR} and
+	    ch.ctime &gt; #{tsv.start,jdbcType=BIGINT} and ch.ctime &lt;= #{tsv.end,jdbcType=BIGINT})
+	  </where>
+      group by ceil((ch.ctime - #{tsv.start,jdbcType=BIGINT}) /
+      ceil((#{tsv.end,jdbcType=BIGINT} - #{tsv.start,jdbcType=BIGINT})
+       / #{nodeSize,jdbcType=INTEGER}))
+      order by ceil((ch.ctime - #{tsv.start,jdbcType=BIGINT}) /
+      ceil((#{tsv.end,jdbcType=BIGINT} - #{tsv.start,jdbcType=BIGINT})
+       / #{nodeSize,jdbcType=INTEGER}))
+  </select>
+  
+  <select id="selectDayInfo" resultType="long">
+  	select time - mod(time+8*60*60*1000, 24*60*60*1000) dtime
+  	from collection_history
+  	<where>
+  		time &lt; #{time,jdbcType=BIGINT}
+  		<if test="ctid != null">
+		   and ctid = #{ctid,jdbcType=VARCHAR}
+  		</if>  
+  		<if test="csid != null">
+  		   and csid = #{csid,jdbcType=VARCHAR}	
+  		</if>
+  	</where>
+  	group by dtime
+  	order by dtime desc
+  </select>
+  	
+  <select id="selectByDay" resultMap="ResultMapWithBLOBs">
+  	select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from collection_history ch
+    left join collection_task ct on
+    (ch.ctid = ct.ctid and ch.csid = ct.csid)
+    left join collection_application ca on
+    (ct.caName = ca.egName and ct.caVersion = ca.version)
+    left join collection_server cs on ct.csid = cs.csid
+    <where>
+    	year(FROM_UNIXTIME(ch.time/1000)) = #{year,jdbcType=INTEGER}
+    	and 
+    	month(FROM_UNIXTIME(ch.time/1000)) = #{month,jdbcType=INTEGER}
+    	and
+    	day(FROM_UNIXTIME(ch.time/1000)) = #{day,jdbcType=INTEGER}
+  		<if test="ctid != null">
+		   and ch.ctid = #{ctid,jdbcType=VARCHAR}
+  		</if>
+  		<if test="csid != null">
+  		   and ch.csid = #{csid,jdbcType=VARCHAR}
+  		</if>
+    </where>
+    order by ch.time desc
+  </select>
+</mapper>

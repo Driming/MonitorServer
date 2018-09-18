@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.storage.dataField.indexDetail.StorageDataIndexDetailInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.storage.dataField.indexDetail.StorageDataIndexDetailInfo" >
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="collectName" property="collectname" jdbcType="VARCHAR" />
+    <result column="field" property="field" jdbcType="VARCHAR" />
+    <result column="elements" property="elements" jdbcType="VARCHAR" />
+    <result column="vals" property="values" jdbcType="VARCHAR" />
+    <result column="fieldType" property="fieldtype" jdbcType="SMALLINT" />
+    <result column="count" property="count" jdbcType="DOUBLE" />
+    <result column="percent" property="percent" jdbcType="DOUBLE" />
+    <result column="fields" property="fields" jdbcType="LONGVARCHAR" />
+    <result column="time" property="time" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <resultMap id="StandardResultMap" type="com.hc.vo.StorageDataIndexDetailInfoVo" >
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="collectName" property="collectname" jdbcType="VARCHAR" />
+    <result column="field" property="field" jdbcType="VARCHAR" />
+    <result column="elements" property="elements" jdbcType="VARCHAR" javaType="java.util.List"/>
+    <result column="vals" property="values" jdbcType="VARCHAR" javaType="java.util.List"/>
+    <result column="fieldType" property="fieldtype" jdbcType="SMALLINT" />
+    <result column="count" property="count" jdbcType="DOUBLE" />
+    <result column="percent" property="percent" jdbcType="DOUBLE" />
+    <result column="fields" property="fields" jdbcType="LONGVARCHAR" javaType="java.util.List"/>
+    <result column="time" property="time" jdbcType="BIGINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, collectName, field, elements, vals, fieldType, count, percent, fields, time
+  </sql>
+  
+  <select id="selectAll" resultMap="StandardResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from storage_data_index_detail_info
+    <where>
+    	1=1
+    	<if test="id != null">
+    		and id = #{id,jdbcType=VARCHAR}
+    	</if>
+    	<if test="collectName != null">
+    		and collectName = #{collectName,jdbcType=VARCHAR}
+    	</if>
+    	<if test="field != null">
+    		and field = #{field,jdbcType=VARCHAR}
+    	</if>
+    	<if test="fieldTypes != null and fieldTypes.size() > 0">
+    		and fieldType in 
+    		<foreach collection="fieldTypes"  item="item" index="index" open="(" close=")" separator=",">
+    			#{item,jdbcType=SMALLINT}
+    		</foreach>
+    	</if>
+    	<if test="fieldsItem != null">
+    		and (locate(concat(', ', #{fieldsItem,jdbcType=VARCHAR}, ','), fields) != 0 
+    		or
+    		locate(concat('[', #{fieldsItem,jdbcType=VARCHAR}, ','), fields) != 0 
+    		or
+    		locate(concat(', ', #{fieldsItem,jdbcType=VARCHAR}, ']'), fields) != 0 
+    		or
+    		locate(concat('[', #{fieldsItem,jdbcType=VARCHAR}, ']'), fields) != 0)
+    	</if>
+    </where>
+    order by vals asc
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from storage_data_index_detail_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into storage_data_index_detail_info (id, collectName, field, 
+      elements, vals, fieldType, 
+      count, percent, fields, 
+      time)
+    values 
+     <foreach collection="infos"  item="item" index="index" separator=",">
+        (#{item.id,jdbcType=VARCHAR}, #{item.collectname,jdbcType=VARCHAR},
+         #{item.field,jdbcType=VARCHAR}, #{item.elements,jdbcType=VARCHAR}, 
+         #{item.values,jdbcType=VARCHAR}, #{item.fieldtype,jdbcType=SMALLINT}, 
+     	 #{item.count,jdbcType=DOUBLE}, #{item.percent,jdbcType=DOUBLE},
+     	 #{item.fields,jdbcType=LONGVARCHAR}, #{item.time,jdbcType=BIGINT})
+     </foreach>
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.hc.entity.storage.dataField.indexDetail.StorageDataIndexDetailInfo" >
+    insert into storage_data_index_detail_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="collectname != null" >
+        collectName,
+      </if>
+      <if test="field != null" >
+        field,
+      </if>
+      <if test="elements != null" >
+        elements,
+      </if>
+      <if test="values != null" >
+        values,
+      </if>
+      <if test="fieldtype != null" >
+        fieldType,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="percent != null" >
+        percent,
+      </if>
+      <if test="fields != null" >
+        fields,
+      </if>
+      <if test="time != null" >
+        time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="collectname != null" >
+        #{collectname,jdbcType=VARCHAR},
+      </if>
+      <if test="field != null" >
+        #{field,jdbcType=VARCHAR},
+      </if>
+      <if test="elements != null" >
+        #{elements,jdbcType=VARCHAR},
+      </if>
+      <if test="values != null" >
+        #{values,jdbcType=VARCHAR},
+      </if>
+      <if test="fieldtype != null" >
+        #{fieldtype,jdbcType=SMALLINT},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=DOUBLE},
+      </if>
+      <if test="percent != null" >
+        #{percent,jdbcType=DOUBLE},
+      </if>
+      <if test="fields != null" >
+        #{fields,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="time != null" >
+        #{time,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hc.entity.storage.dataField.indexDetail.StorageDataIndexDetailInfo" >
+    update storage_data_index_detail_info
+    <set >
+      <if test="count != null" >
+        count = #{count,jdbcType=DOUBLE},
+      </if>
+      <if test="percent != null" >
+        percent = #{percent,jdbcType=DOUBLE},
+      </if>
+      <if test="fields != null" >
+        fields = #{fields,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="time != null" >
+        time = #{time,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+      and collectName = #{collectname,jdbcType=VARCHAR}
+      and field = #{field,jdbcType=VARCHAR}
+      and elements = #{elements,jdbcType=VARCHAR}
+      and values = #{values,jdbcType=VARCHAR}
+      and fieldType = #{fieldtype,jdbcType=SMALLINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hc.entity.storage.dataField.indexDetail.StorageDataIndexDetailInfo" >
+    update storage_data_index_detail_info
+    set count = #{count,jdbcType=DOUBLE},
+      percent = #{percent,jdbcType=DOUBLE},
+      fields = #{fields,jdbcType=LONGVARCHAR},
+      time = #{time,jdbcType=BIGINT}
+    where id = #{id,jdbcType=VARCHAR}
+      and collectName = #{collectname,jdbcType=VARCHAR}
+      and field = #{field,jdbcType=VARCHAR}
+      and elements = #{elements,jdbcType=VARCHAR}
+      and values = #{values,jdbcType=VARCHAR}
+      and fieldType = #{fieldtype,jdbcType=SMALLINT}
+  </update>
+</mapper>

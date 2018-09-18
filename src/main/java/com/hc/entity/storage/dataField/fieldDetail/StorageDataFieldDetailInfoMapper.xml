@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.storage.dataField.fieldDetail.StorageDataFieldDetailInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.storage.dataField.fieldDetail.StorageDataFieldDetailInfo" >
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="collectName" property="collectname" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="field" property="field" jdbcType="VARCHAR" />
+    <result column="fieldType" property="fieldtype" jdbcType="SMALLINT" />
+    <result column="count" property="count" jdbcType="DOUBLE" />
+    <result column="percent" property="percent" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    fdi.id, fdi.collectName, fdi.type, fdi.field, fdi.fieldType, fdi.count, fdi.percent
+  </sql>
+  
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    convert(fdi.percent, decimal(10,2)) percent,
+    <include refid="Base_Column_List" />
+    from storage_data_field_detail_info fdi
+    <where>
+    	1=1
+    	<if test="id != null">
+    		and fdi.id = #{id,jdbcType=VARCHAR}
+    	</if>
+    	<if test="collectName != null"> 
+    		and fdi.collectName = #{collectName,jdbcType=VARCHAR}
+    	</if>
+    </where>
+    order by fdi.percent desc
+  </select>
+  
+  <delete id="deleteByid" parameterType="java.lang.String" >
+    delete from storage_data_field_detail_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into storage_data_field_detail_info (id, collectName, type, 
+      field, fieldType, count, 
+      percent)
+    values 
+     <foreach collection="infos"  item="item" index="index" separator=",">
+       (#{item.id,jdbcType=VARCHAR}, #{item.collectname,jdbcType=VARCHAR},
+        #{item.type,jdbcType=VARCHAR}, #{item.field,jdbcType=VARCHAR},
+        #{item.fieldtype,jdbcType=SMALLINT}, #{item.count,jdbcType=DOUBLE}, 
+        #{item.percent,jdbcType=DOUBLE})
+     </foreach>
+  </insert>
+  
+  
+  <insert id="insertSelective" parameterType="com.hc.entity.storage.dataField.fieldDetail.StorageDataFieldDetailInfo" >
+    insert into storage_data_field_detail_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="collectname != null" >
+        collectName,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="field != null" >
+        field,
+      </if>
+      <if test="fieldtype != null" >
+        fieldType,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="percent != null" >
+        percent,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="collectname != null" >
+        #{collectname,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="field != null" >
+        #{field,jdbcType=VARCHAR},
+      </if>
+      <if test="fieldtype != null" >
+        #{fieldtype,jdbcType=SMALLINT},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=DOUBLE},
+      </if>
+      <if test="percent != null" >
+        #{percent,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hc.entity.storage.dataField.fieldDetail.StorageDataFieldDetailInfo" >
+    update storage_data_field_detail_info
+    <set >
+      <if test="count != null" >
+        count = #{count,jdbcType=DOUBLE},
+      </if>
+      <if test="percent != null" >
+        percent = #{percent,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+      and collectName = #{collectname,jdbcType=VARCHAR}
+      and type = #{type,jdbcType=VARCHAR}
+      and field = #{field,jdbcType=VARCHAR}
+      and fieldType = #{fieldtype,jdbcType=SMALLINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hc.entity.storage.dataField.fieldDetail.StorageDataFieldDetailInfo" >
+    update storage_data_field_detail_info
+    set count = #{count,jdbcType=DOUBLE},
+      percent = #{percent,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=VARCHAR}
+      and collectName = #{collectname,jdbcType=VARCHAR}
+      and type = #{type,jdbcType=VARCHAR}
+      and field = #{field,jdbcType=VARCHAR}
+      and fieldType = #{fieldtype,jdbcType=SMALLINT}
+  </update>
+</mapper>

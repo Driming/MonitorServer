@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.service.urlDir.ServiceUrlDirMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.service.urlDir.ServiceUrlDir" >
+    <id column="name" property="name" jdbcType="VARCHAR" />
+    <id column="url" property="url" jdbcType="VARCHAR" />
+    <id column="server" property="server" jdbcType="VARCHAR" />
+    <result column="dirType" property="dirtype" jdbcType="VARCHAR" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="isRoot" property="isroot" jdbcType="SMALLINT" />
+    <collection property="subs" column="{dirserver=server,dirurl=url}"
+     ofType="com.hc.entity.service.urlDir.ServiceUrlDir" select="selectByKeys"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    name, url, server, dirType, cname, dirServer, dirUrl, isRoot
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from service_url_dir
+    <where>
+    	<if test="servers != null and servers.size() > 0">
+   		   server in
+  		   <foreach collection="servers"  item="item" index="index" open="(" close=")" separator=",">
+  			  #{item,jdbcType=VARCHAR}
+  		   </foreach>
+    	</if>
+    </where>
+    order by sequence
+  </select>
+  
+  <select id="selectAllByRoot" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from service_url_dir
+    <where>
+    	isRoot = 1
+    	<if test="servers != null and servers.size() > 0">
+   		   and server in
+  		   <foreach collection="servers"  item="item" index="index" open="(" close=")" separator=",">
+  			  #{item,jdbcType=VARCHAR}
+  		   </foreach>
+    	</if>
+    </where>
+    order by sequence
+  </select>
+  
+  <select id="selectByKeys" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from service_url_dir
+    <where>
+		dirServer = #{dirserver,jdbcType=VARCHAR}
+    	and dirUrl = #{dirurl,jdbcType=VARCHAR}
+    </where>
+  </select>
+  
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into service_url_dir (name, url, server, 
+      dirType, cname, dirServer, dirUrl, isRoot,
+      sequence)
+    values
+    <foreach collection="urlDirs"  item="item" index="index" separator=",">
+      (#{item.name,jdbcType=VARCHAR}, #{item.url,jdbcType=VARCHAR}, #{item.server,jdbcType=VARCHAR}, 
+      #{item.dirtype,jdbcType=VARCHAR}, #{item.cname,jdbcType=VARCHAR}, #{item.dirserver,jdbcType=VARCHAR}, 
+      #{item.dirurl,jdbcType=VARCHAR}, #{item.isroot,jdbcType=SMALLINT}, #{item.sequence,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  
+  <delete id="deleteServiceUrlDirBatch" parameterType="java.util.List">
+    delete from service_url_dir
+    <where>
+	    <if test="removeUrlDirs.size()==0">1=0</if>
+	    <if test="removeUrlDirs.size() > 0">
+	    	<foreach collection="removeUrlDirs" item="item" open="(" separator="or" close=")">  
+	       	 	(url = #{item.url} and server = #{item.server})  
+	    	</foreach>
+	    </if>
+    </where>
+  </delete>
+  
+  <update id="updateServiceUrlDirBatch" parameterType="java.util.List">
+	<foreach collection="updateUrlDirs" item="item" index="index" separator=";">   
+	    update service_url_dir
+	<set >
+      <if test="item.dirtype != null" >
+        dirType = #{item.dirtype,jdbcType=VARCHAR},
+      </if>
+      <if test="item.cname != null" >
+        cname = #{item.cname,jdbcType=VARCHAR},
+      </if>
+      <if test="item.dirserver != null" >
+       	dirServer = #{item.dirserver,jdbcType=VARCHAR},
+      </if>
+      <if test="item.dirurl != null" >
+        dirUrl = #{item.dirurl,jdbcType=VARCHAR},
+      </if>
+      <if test="item.name != null" >
+       	name = #{item.name,jdbcType=VARCHAR},
+      </if>
+      <if test="item.isroot != null" >
+       	isRoot = #{item.isroot,jdbcType=SMALLINT},
+      </if>
+      <if test="item.sequence != null" >
+       	sequence = #{item.sequence,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where url = #{item.url,jdbcType=VARCHAR}
+      and server = #{item.server,jdbcType=VARCHAR}
+ 	</foreach>
+  </update>
+  
+  <insert id="insert" parameterType="com.hc.entity.service.urlDir.ServiceUrlDir" >
+    insert into service_url_dir (name, url, server, 
+      dirType, cname, fkServer, 
+      fkName, fkUrl)
+    values (#{name,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{server,jdbcType=VARCHAR}, 
+      #{dirtype,jdbcType=VARCHAR}, #{cname,jdbcType=VARCHAR}, #{fkserver,jdbcType=VARCHAR}, 
+      #{fkname,jdbcType=VARCHAR}, #{fkurl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hc.entity.service.urlDir.ServiceUrlDir" >
+    insert into service_url_dir
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="server != null" >
+        server,
+      </if>
+      <if test="dirtype != null" >
+        dirType,
+      </if>
+      <if test="cname != null" >
+        cname,
+      </if>
+      <if test="fkserver != null" >
+        fkServer,
+      </if>
+      <if test="fkname != null" >
+        fkName,
+      </if>
+      <if test="fkurl != null" >
+        fkUrl,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="server != null" >
+        #{server,jdbcType=VARCHAR},
+      </if>
+      <if test="dirtype != null" >
+        #{dirtype,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="fkserver != null" >
+        #{fkserver,jdbcType=VARCHAR},
+      </if>
+      <if test="fkname != null" >
+        #{fkname,jdbcType=VARCHAR},
+      </if>
+      <if test="fkurl != null" >
+        #{fkurl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hc.entity.service.urlDir.ServiceUrlDir" >
+    update service_url_dir
+    <set >
+      <if test="dirtype != null" >
+        dirType = #{dirtype,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        cname = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="fkserver != null" >
+        fkServer = #{fkserver,jdbcType=VARCHAR},
+      </if>
+      <if test="fkname != null" >
+        fkName = #{fkname,jdbcType=VARCHAR},
+      </if>
+      <if test="fkurl != null" >
+        fkUrl = #{fkurl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where name = #{name,jdbcType=VARCHAR}
+      and url = #{url,jdbcType=VARCHAR}
+      and server = #{server,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hc.entity.service.urlDir.ServiceUrlDir" >
+    update service_url_dir
+    set dirType = #{dirtype,jdbcType=VARCHAR},
+      cname = #{cname,jdbcType=VARCHAR},
+      fkServer = #{fkserver,jdbcType=VARCHAR},
+      fkName = #{fkname,jdbcType=VARCHAR},
+      fkUrl = #{fkurl,jdbcType=VARCHAR}
+    where name = #{name,jdbcType=VARCHAR}
+      and url = #{url,jdbcType=VARCHAR}
+      and server = #{server,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.control.middle.rus.RoleUserServerMiddleMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.control.middle.rus.RoleUserServerMiddleKey" >
+    <id column="r_rid" property="rid" jdbcType="INTEGER" />
+    <id column="cs_csid" property="csid" jdbcType="VARCHAR" />
+    <id column="u_uid" property="uid" jdbcType="INTEGER" />
+	<result column="r_name" property="name" jdbcType="VARCHAR" />
+    <result column="cs_ip" property="ip" jdbcType="VARCHAR" />
+    <result column="cs_port" property="port" jdbcType="INTEGER" />
+    <result column="cs_description" property="description" jdbcType="VARCHAR" />
+	<result column="u_username" property="username" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="All_Column_List" >
+    r.rid r_rid, r.name r_name,
+    cs.csid cs_csid, cs.ip cs_ip, cs.port cs_port, cs.description cs_description,
+    u.uid u_uid, u.username u_username
+  </sql>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="All_Column_List" />
+    from control_user_role_server_middle urs
+    left join user u on u.uid = urs.uid
+    left join collection_server cs on cs.csid = urs.csid
+    left join control_role r on r.rid = urs.rid
+    <where>
+    	<if test="csid != null">
+    		urs.csid = #{csid,jdbcType=VARCHAR}
+    	</if>
+    	<if test="csid == null and uid != null">
+    		urs.uid = #{uid,jdbcType=INTEGER}
+    	</if>
+    	<if test="csid != null and uid != null">
+    		and urs.uid = #{uid,jdbcType=INTEGER}
+    	</if>
+    </where>
+  </select>
+  
+  <select id="selectUserAccesses" resultType="int">
+    select distinct(ra.acid)
+    from control_user_role_server_middle urs
+    left join user u on u.uid = urs.uid
+    left join collection_server cs on cs.csid = urs.csid
+    left join control_role_access_middle ra on ra.rid = urs.rid
+    <where>
+    	urs.uid = #{uid,jdbcType=INTEGER}
+    	and
+    	urs.csid = #{csid,jdbcType=VARCHAR}
+    	and 
+    	ra.acid is not null
+    </where>
+  </select>
+  
+  <delete id="deleteRoleUserServer" parameterType="com.hc.entity.control.middle.rus.RoleUserServerMiddleKey" >
+    delete from control_user_role_server_middle
+    where rid = #{rid,jdbcType=INTEGER}
+      and csid = #{csid,jdbcType=VARCHAR}
+      and uid = #{uid,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteRoleUserServerByUid" parameterType="com.hc.entity.control.middle.rus.RoleUserServerMiddleKey" >
+    delete from control_user_role_server_middle
+    where uid = #{uid,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insertRoleUserServer" parameterType="com.hc.entity.control.middle.rus.RoleUserServerMiddleKey" >
+    insert into control_user_role_server_middle (rid, csid, uid
+      )
+    values (#{rid,jdbcType=INTEGER}, #{csid,jdbcType=VARCHAR}, #{uid,jdbcType=INTEGER}
+      )
+  </insert>
+  
+  <insert id="insertRoleUserServerBatch" parameterType="java.util.List">
+    insert into control_user_role_server_middle (rid, csid, uid
+      )
+      values
+      <foreach collection="ruses"  item="item" index="index" separator=",">
+          (#{item.rid,jdbcType=INTEGER}, #{item.csid,jdbcType=VARCHAR}, #{item.uid,jdbcType=INTEGER})
+      </foreach>
+  </insert>
+  
+  <update id="updateRoleUserServer">
+    update control_user_role_server_middle
+    <set>
+        rid = #{newRecord.rid,jdbcType=INTEGER},
+        csid = #{newRecord.csid,jdbcType=VARCHAR},
+        uid = #{newRecord.uid,jdbcType=INTEGER}
+    </set>
+    where 
+    rid = #{oldRecord.rid,jdbcType=INTEGER}
+    and
+    csid = #{oldRecord.csid,jdbcType=VARCHAR}
+    and
+    uid = #{oldRecord.uid,jdbcType=INTEGER}
+  </update>
+</mapper>

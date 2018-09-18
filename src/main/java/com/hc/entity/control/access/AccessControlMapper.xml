@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.control.access.AccessControlMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.control.access.AccessControl" >
+    <id column="acid" property="acid" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    acid, name
+  </sql>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from control_access
+  </select>
+  
+  <select id="selectMaxAcid" resultType="java.lang.Integer">
+    select max(acid)
+    from control_access
+  </select>
+  
+  <delete id="deleteAccessControl" parameterType="java.lang.Integer" >
+    delete from control_access
+    where acid = #{acid,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insertAccessControlSelective" parameterType="com.hc.entity.control.access.AccessControl" >
+    insert into control_access
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="acid != null" >
+        acid,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="acid != null" >
+        #{acid,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateAccessControlSelective" parameterType="com.hc.entity.control.access.AccessControl" >
+    update control_access
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where acid = #{acid,jdbcType=INTEGER}
+  </update>
+
+</mapper>

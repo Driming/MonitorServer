@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.collection.application.CollectionApplicationMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.collection.application.CollectionApplication" >
+    <id column="egName" property="egName" jdbcType="VARCHAR" />
+    <id column="version" property="version" jdbcType="VARCHAR" />
+    <result column="chName" property="chName" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="minVersion" property="minVersion" jdbcType="INTEGER" />
+    <result column="config" property="config" jdbcType="VARCHAR" /> 
+    <result column="isUsed" property="isUsed" jdbcType="SMALLINT" />
+    <collection property="cts" ofType="com.hc.entity.collection.task.CollectionTask">
+    	<id column="ct_ctid" property="ctid" jdbcType="VARCHAR" />
+    	<id column="ct_csid" property="csid" jdbcType="VARCHAR" />
+    	<result column="ct_caName" property="caName" jdbcType="VARCHAR" />
+    	<result column="ct_caVersion" property="caVersion" jdbcType="VARCHAR" />
+	    <result column="ct_name" property="name" jdbcType="VARCHAR" />
+	    <result column="ct_status" property="status" jdbcType="VARCHAR" />
+	    <result column="ct_lastExecuteTime" property="lastExecuteTime" jdbcType="BIGINT" />
+	    <result column="ct_totalDataSourceNum" property="totalDataSourceNum" jdbcType="INTEGER" />
+	    <result column="ct_totalDataSourceSize" property="totalDataSourceSize" jdbcType="BIGINT" />
+	    <result column="ct_totalDataResultNum" property="totalDataResultNum" jdbcType="INTEGER" />
+	    <result column="ct_totalDataResultSize" property="totalDataResultSize" jdbcType="BIGINT" />
+	    <result column="ct_config" property="config" jdbcType="VARCHAR" />
+	    <result column="ct_label" property="label" jdbcType="VARCHAR" />
+	    <result column="ct_isUsed" property="isUsed" jdbcType="SMALLINT" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    egName, version, chName, author, description, minVersion
+  </sql>
+  
+  <sql id="All_Column_List" >
+  	ca.egName, ca.version, ca.chName, ca.author, ca.description, ca.minVersion,
+  	ct.ctid ct_ctid, ct.csid ct_csid, ct.caName ct_caName, ct.caVersion ct_caVersion,
+    ct.name ct_name, ct.status ct_status, ct.lastExecuteTime ct_lastExecuteTime,
+    ct.totalDataSourceNum ct_totalDataSourceNum, 
+    ct.totalDataSourceSize ct_totalDataSourceSize, ct.totalDataResultNum ct_totalDataResultNum,
+    ct.totalDataResultSize ct_totalDataResultSize,
+    ct.config ct_config, ct.label ct_label
+  </sql>
+  
+  <select id="selectCollectionApplication" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from collection_application
+    <where>
+    	1=1
+	    <if test="name != null">
+	    	and egName = #{name,jdbcType=SMALLINT} 
+	    </if>
+	    <if test="version != null">
+	 	    and version = #{version,jdbcType=SMALLINT} 
+	    </if>
+    </where>
+  </select>
+  
+  <select id="selectApplicationTasks" resultMap="BaseResultMap">
+    select 
+    <include refid="All_Column_List" />
+    from collection_application ca
+    left join collection_task ct on (ct.caName = ca.egName and ct.caVersion = ca.version)
+    <where>
+    	1=1
+	    <if test="csid != null">
+	   	    and ct.csid = #{csid,jdbcType=VARCHAR}
+	    </if>
+	    <if test="isUsedCa != null">
+	    	and ca.isUsed = #{isUsedCa,jdbcType=SMALLINT} 
+	    </if>
+	    <if test="isUsedCt != null">
+	    	and ct.isUsed = #{isUsedCt,jdbcType=SMALLINT} 
+	    </if>
+    </where>
+    order by ca.chName asc
+  </select>
+  
+  <select id="selectApplicationTasksByMultiCondition" resultMap="BaseResultMap">
+    select 
+    <include refid="All_Column_List" />
+    from collection_application ca
+    left join collection_task ct on 
+    (ct.caName = ca.egName and ct.caVersion = ca.version)
+    <where>
+    <if test="mcv.csids != null and mcv.csids.size() > 0">
+    	ct.csid in
+    	<foreach collection="mcv.csids" item="item" open="(" separator="," close=") and">  
+		    #{item}
+		</foreach>
+    </if>
+    <if test="mcv.cas != null and mcv.cas.size() > 0">
+    	<foreach collection="mcv.cas" item="item" open="(" separator="or" close=") and">  
+		   (ct.caName = #{item.egName} and ct.caVersion = #{item.version})
+		</foreach>
+    </if>
+    <if test="mcv.cts != null and mcv.cts.size() > 0">
+    	<foreach collection="mcv.cts" item="item" open="(" separator="or" close=") and">  
+		    (ct.ctid = #{item.ctid} and ct.csid = #{item.csid})
+		</foreach>
+    </if>
+    <if test="mcv.statuss != null and mcv.statuss.size() > 0">
+    	ct.status in
+    	<foreach collection="mcv.statuss" item="item" open="(" separator="," close=") and">  
+		    #{item}
+		</foreach>
+    </if>
+    <if test="mcv.labels != null and mcv.labels.size() > 0">
+    	ct.label in
+    	<foreach collection="mcv.labels" item="item" open="(" separator="," close=") and">  
+		    #{item}
+		</foreach>
+    </if>
+    ct.lastExecuteTime between #{mcv.starttime,jdbcType=BIGINT}
+    and #{mcv.endtime,jdbcType=BIGINT}
+    <if test="isUsedCa != null">
+    	and ca.isUsed = #{isUsedCa,jdbcType=SMALLINT} 
+    </if>
+    <if test="isUsedCt != null">
+  	    and ct.isUsed = #{isUsedCt,jdbcType=SMALLINT} 
+    </if>
+    </where>
+    order by ca.chName asc
+  </select>
+  
+  <select id="selectCompleteCollectionApplications" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from collection_application ca
+    left join collection_task ct on
+    (ct.caName = ca.egName and ct.caVersion = ca.version)
+    <where>
+    	  1=1
+	    <if test="csid != null">
+	   		and ct.csid = #{csid,jdbcType=VARCHAR}
+	    </if>
+	    <if test="isUsedCa != null">
+	    	and ca.isUsed = #{isUsedCa,jdbcType=SMALLINT} 
+	    </if>
+	    <if test="isUsedCt != null">
+	 	    and ct.isUsed = #{isUsedCt,jdbcType=SMALLINT} 
+	    </if>
+    </where>
+  </select>
+  
+  <select id="selectCollectionApplications" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from collection_application
+    <where>
+	    <if test="isUsedCa != null">
+	    	isUsed = #{isUsedCa,jdbcType=SMALLINT} 
+	    </if>
+    </where>
+  </select>
+  
+ <insert id="insertCollectionApplication" parameterType="com.hc.entity.collection.application.CollectionApplication">
+      insert into collection_application (egName, chName, 
+      description, version, author)
+      values
+          (#{egName,jdbcType=VARCHAR}, #{chName,jdbcType=VARCHAR},
+           #{description,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, 
+           #{author,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateCollectionApplicationSelective" parameterType="com.hc.entity.collection.application.CollectionApplication">
+	   update collection_application
+	   	 <set>
+	      <if test="chName != null" >
+	        chName = #{chName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="description != null" >
+	        description = #{description,jdbcType=VARCHAR},
+	      </if>
+	      <if test="author != null" >
+	        author = #{author,jdbcType=VARCHAR},
+	      </if>
+	      <if test="minVersion != null" >
+	        minVersion = #{minVersion,jdbcType=VARCHAR},
+	      </if>
+	      <if test="isUsed != null" >
+	        isUsed = #{isUsed,jdbcType=VARCHAR},
+	      </if>
+	    </set>
+	    where egName = #{egName,jdbcType=VARCHAR} and
+	    version = #{version,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertCollectionApplicationBatch" parameterType="java.util.List">
+      insert into collection_application (egName, chName, 
+      description, version, author, config)
+      values
+      <foreach collection="insertCas"  item="item" index="index" separator=",">
+          (#{item.egName,jdbcType=VARCHAR}, #{item.chName,jdbcType=VARCHAR},
+           #{item.description,jdbcType=VARCHAR}, #{item.version,jdbcType=VARCHAR}, 
+           #{item.author,jdbcType=VARCHAR}, #{item.config,jdbcType=VARCHAR})
+      </foreach>
+  </insert>
+  
+  <delete id="deleteCollectionApplicationBatch">
+  	delete from collection_application
+  	<where>
+	    <if test="removeCas.size()==0">1=0</if>
+	    <if test="removeCas.size() > 0">
+	    	<foreach collection="removeCas" item="item" open="(" separator="or" close=")">  
+	       	 	(egName = #{item.egName} and version = #{item.version})  
+	    	</foreach>
+	    </if>
+    </where>
+  </delete>
+  
+  <update id="updateCollectionApplicationBatch" parameterType="java.util.List">
+	<foreach collection="updateCas" item="item" index="index" separator=";">   
+	    update collection_application
+	   	 <set>
+	      <if test="item.chName != null" >
+	        chName = #{item.chName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.description != null" >
+	        description = #{item.description,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.author != null" >
+	        author = #{item.author,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.minVersion != null" >
+	        minVersion = #{item.minVersion,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.isUsed != null" >
+	        isUsed = #{item.isUsed,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.config != null" >
+	        config = #{item.config,jdbcType=VARCHAR},
+	      </if>
+	    </set>
+	    where egName = #{item.egName,jdbcType=VARCHAR} and
+	    version = #{item.version,jdbcType=VARCHAR}
+ 	</foreach>
+  </update>
+  
+</mapper>

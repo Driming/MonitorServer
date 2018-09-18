@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.collection.task.status.CollectionTaskTimePointStatusMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.collection.task.status.CollectionTaskTimePointStatus" >
+    <id column="ctid" property="ctid" jdbcType="VARCHAR" />
+    <id column="timeSave" property="timesave" jdbcType="BIGINT" />
+    <id column="timeDelay" property="timedelay" jdbcType="BIGINT" />
+    <result column="timeCurrent" property="timecurrent" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ctid, timeSave, timeDelay, timeCurrent, status
+  </sql>
+  
+  <insert id="insert" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatus" >
+    insert into collection_task_time_point_status (ctid, timeSave, timeDelay, 
+      timeCurrent, status)
+    values (#{ctid,jdbcType=VARCHAR}, #{timesave,jdbcType=BIGINT}, #{timedelay,jdbcType=BIGINT}, 
+      #{timecurrent,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="upsert" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatus" >
+    insert into collection_task_time_point_status (ctid, timeSave, timeDelay, 
+      timeCurrent, status)
+    values (#{ctid,jdbcType=VARCHAR}, #{timesave,jdbcType=BIGINT}, #{timedelay,jdbcType=BIGINT}, 
+      #{timecurrent,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR})
+    on duplicate key update
+ 	  timeCurrent = #{timecurrent,jdbcType=BIGINT},
+	  status = #{status,jdbcType=VARCHAR}
+  </insert>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatusKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from collection_task_time_point_status
+    where ctid = #{ctid,jdbcType=VARCHAR}
+      and timeSave = #{timesave,jdbcType=BIGINT}
+      and timeDelay = #{timedelay,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatusKey" >
+    delete from collection_task_time_point_status
+    where ctid = #{ctid,jdbcType=VARCHAR}
+      and timeSave = #{timesave,jdbcType=BIGINT}
+      and timeDelay = #{timedelay,jdbcType=BIGINT}
+  </delete>
+ 
+  <insert id="insertSelective" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatus" >
+    insert into collection_task_time_point_status
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ctid != null" >
+        ctid,
+      </if>
+      <if test="timesave != null" >
+        timeSave,
+      </if>
+      <if test="timedelay != null" >
+        timeDelay,
+      </if>
+      <if test="timecurrent != null" >
+        timeCurrent,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ctid != null" >
+        #{ctid,jdbcType=VARCHAR},
+      </if>
+      <if test="timesave != null" >
+        #{timesave,jdbcType=BIGINT},
+      </if>
+      <if test="timedelay != null" >
+        #{timedelay,jdbcType=BIGINT},
+      </if>
+      <if test="timecurrent != null" >
+        #{timecurrent,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatus" >
+    update collection_task_time_point_status
+    <set >
+      <if test="timecurrent != null" >
+        timeCurrent = #{timecurrent,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ctid = #{ctid,jdbcType=VARCHAR}
+      and timeSave = #{timesave,jdbcType=BIGINT}
+      and timeDelay = #{timedelay,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatus" >
+    update collection_task_time_point_status
+    set timeCurrent = #{timecurrent,jdbcType=BIGINT},
+      status = #{status,jdbcType=VARCHAR}
+    where ctid = #{ctid,jdbcType=VARCHAR}
+      and timeSave = #{timesave,jdbcType=BIGINT}
+      and timeDelay = #{timedelay,jdbcType=BIGINT}
+  </update>
+</mapper>

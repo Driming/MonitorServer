@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.service.urlInfo.ServiceUrlInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.service.urlInfo.ServiceUrlInfo" >
+    <id column="server" property="server" jdbcType="VARCHAR" />
+    <id column="url" property="url" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="dirType" property="dirtype" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="returnType" property="returntype" jdbcType="VARCHAR" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+    <result column="dirServer" property="dirserver" jdbcType="VARCHAR" />
+    <result column="dirUrl" property="dirurl" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.hc.entity.service.urlInfo.ServiceUrlInfo" extends="BaseResultMap" >
+    <result column="args" property="args" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    server, url, name, dirType, description, returnType, cname, dirServer, dirUrl
+  </sql>
+  <sql id="Blob_Column_List" >
+    args
+  </sql>
+  
+  <select id="selectAll" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from service_url_info
+    <where>
+    	<if test="servers != null and servers.size() > 0">
+   			server in
+   			<foreach collection="servers"  item="item" index="index" open="(" close=")" separator=",">
+   			   #{item,jdbcType=VARCHAR}
+   			</foreach>
+    	</if>
+    </where>
+    order by sequence
+  </select>
+  
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into service_url_info (server, url, name, 
+      dirType, description, returnType, 
+      cname, dirServer, dirUrl, args, sequence)
+    values 
+    <foreach collection="urlInfos"  item="item" index="index" separator=",">
+     (#{item.server,jdbcType=VARCHAR}, #{item.url,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, 
+      #{item.dirtype,jdbcType=VARCHAR}, #{item.description,jdbcType=VARCHAR}, #{item.returntype,jdbcType=VARCHAR}, 
+      #{item.cname,jdbcType=VARCHAR}, #{item.dirserver,jdbcType=VARCHAR}, #{item.dirurl,jdbcType=VARCHAR}, 
+      #{item.args,jdbcType=LONGVARCHAR}, #{item.sequence,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  
+  <delete id="deleteServiceUrlInfoBatch" parameterType="java.util.List">
+    delete from service_url_info
+    <where>
+	    <if test="removeUrlInfos.size()==0">1=0</if>
+	    <if test="removeUrlInfos.size() > 0">
+	    	<foreach collection="removeUrlInfos" item="item" open="(" separator="or" close=")">  
+	       	 	(url = #{item.url} and server = #{item.server})  
+	    	</foreach>
+	    </if>
+    </where>
+  </delete>
+  
+  <update id="updateServiceUrlInfoBatch" parameterType="java.util.List">
+	<foreach collection="updateUrlInfos" item="item" index="index" separator=";">   
+	    update service_url_info
+	<set >
+      <if test="item.dirtype != null" >
+        dirType = #{item.dirtype,jdbcType=VARCHAR},
+      </if>
+      <if test="item.cname != null" >
+        cname = #{item.cname,jdbcType=VARCHAR},
+      </if>
+      <if test="item.dirserver != null" >
+       	dirServer = #{item.dirserver,jdbcType=VARCHAR},
+      </if>
+      <if test="item.dirurl != null" >
+        dirUrl = #{item.dirurl,jdbcType=VARCHAR},
+      </if>
+      <if test="item.name != null" >
+       	name = #{item.name,jdbcType=VARCHAR},
+      </if>
+      <if test="item.description != null" >
+        description = #{item.description,jdbcType=VARCHAR},
+      </if>
+      <if test="item.returntype != null" >
+        returnType = #{item.returntype,jdbcType=VARCHAR},
+      </if>
+      <if test="item.args != null" >
+        args = #{item.args,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="item.sequence != null" >
+        sequence = #{item.sequence,jdbcType=INTEGER},
+      </if>
+    </set>
+    where url = #{item.url,jdbcType=VARCHAR}
+      and server = #{item.server,jdbcType=VARCHAR}
+ 	</foreach>
+  </update>
+  
+  <insert id="insert" parameterType="com.hc.entity.service.urlInfo.ServiceUrlInfo" >
+    insert into service_url_info (server, url, name, 
+      dirType, description, returnType, 
+      cname, dirServer, dirUrl, 
+      dirName, args)
+    values (#{server,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{dirtype,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{returntype,jdbcType=VARCHAR}, 
+      #{cname,jdbcType=VARCHAR}, #{dirserver,jdbcType=VARCHAR}, #{dirurl,jdbcType=VARCHAR}, 
+      #{dirname,jdbcType=VARCHAR}, #{args,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hc.entity.service.urlInfo.ServiceUrlInfo" >
+    insert into service_url_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="server != null" >
+        server,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="dirtype != null" >
+        dirType,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="returntype != null" >
+        returnType,
+      </if>
+      <if test="cname != null" >
+        cname,
+      </if>
+      <if test="dirserver != null" >
+        dirServer,
+      </if>
+      <if test="dirurl != null" >
+        dirUrl,
+      </if>
+      <if test="dirname != null" >
+        dirName,
+      </if>
+      <if test="args != null" >
+        args,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="server != null" >
+        #{server,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="dirtype != null" >
+        #{dirtype,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="returntype != null" >
+        #{returntype,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="dirserver != null" >
+        #{dirserver,jdbcType=VARCHAR},
+      </if>
+      <if test="dirurl != null" >
+        #{dirurl,jdbcType=VARCHAR},
+      </if>
+      <if test="dirname != null" >
+        #{dirname,jdbcType=VARCHAR},
+      </if>
+      <if test="args != null" >
+        #{args,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hc.entity.service.urlInfo.ServiceUrlInfo" >
+    update service_url_info
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="dirtype != null" >
+        dirType = #{dirtype,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="returntype != null" >
+        returnType = #{returntype,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        cname = #{cname,jdbcType=VARCHAR},
+      </if>
+      <if test="dirserver != null" >
+        dirServer = #{dirserver,jdbcType=VARCHAR},
+      </if>
+      <if test="dirurl != null" >
+        dirUrl = #{dirurl,jdbcType=VARCHAR},
+      </if>
+      <if test="dirname != null" >
+        dirName = #{dirname,jdbcType=VARCHAR},
+      </if>
+      <if test="args != null" >
+        args = #{args,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where server = #{server,jdbcType=VARCHAR}
+      and url = #{url,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hc.entity.service.urlInfo.ServiceUrlInfo" >
+    update service_url_info
+    set name = #{name,jdbcType=VARCHAR},
+      dirType = #{dirtype,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      returnType = #{returntype,jdbcType=VARCHAR},
+      cname = #{cname,jdbcType=VARCHAR},
+      dirServer = #{dirserver,jdbcType=VARCHAR},
+      dirUrl = #{dirurl,jdbcType=VARCHAR},
+      dirName = #{dirname,jdbcType=VARCHAR},
+      args = #{args,jdbcType=LONGVARCHAR}
+    where server = #{server,jdbcType=VARCHAR}
+      and url = #{url,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hc.entity.service.urlInfo.ServiceUrlInfo" >
+    update service_url_info
+    set name = #{name,jdbcType=VARCHAR},
+      dirType = #{dirtype,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      returnType = #{returntype,jdbcType=VARCHAR},
+      cname = #{cname,jdbcType=VARCHAR},
+      dirServer = #{dirserver,jdbcType=VARCHAR},
+      dirUrl = #{dirurl,jdbcType=VARCHAR},
+      dirName = #{dirname,jdbcType=VARCHAR}
+    where server = #{server,jdbcType=VARCHAR}
+      and url = #{url,jdbcType=VARCHAR}
+  </update>
+</mapper>

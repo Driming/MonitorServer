@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.storage.dataField.StorageDataFieldInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.storage.dataField.StorageDataFieldInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <id column="collectName" property="collectname" jdbcType="VARCHAR" />
+    <result column="dataType" property="datatype" jdbcType="VARCHAR" />
+    <result column="collectSize" property="collectsize" jdbcType="DOUBLE" />
+    <result column="dataCount" property="datacount" jdbcType="DOUBLE" />
+    <result column="dataSize" property="datasize" jdbcType="DOUBLE" />
+    <result column="indexSize" property="indexsize" jdbcType="DOUBLE" />
+    <result column="storageSize" property="storagesize" jdbcType="DOUBLE" />
+    <result column="avgObjSize" property="avgobjsize" jdbcType="DOUBLE" />
+    <result column="datetime" property="datetime" jdbcType="BIGINT" />
+    <result column="expectDay" property="expectday" jdbcType="DOUBLE" />
+    <result column="expectGrowth" property="expectgrowth" jdbcType="DOUBLE" />
+    <result column="percentCount" property="percentcount" jdbcType="DOUBLE" />
+    <result column="percentSize" property="percentsize" jdbcType="DOUBLE" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, collectName, collectSize, dataCount, dataSize, indexSize, storageSize, avgObjSize, 
+    datetime, expectDay, expectGrowth, percentCount, percentSize, dataType, cname
+  </sql>
+  
+  <select id="selectAllById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from storage_data_field_info
+	<where>
+		<if test = "id != null">
+			id = #{id,jdbcType=VARCHAR}
+		</if>
+	</where>
+  </select>
+  
+  <select id="selectCollectNames" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    distinct(collectName) collectName, dataType
+    from storage_data_field_info
+	<where>
+		<if test = "id != null">
+			id = #{id,jdbcType=VARCHAR}
+		</if>
+	</where>
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from storage_data_field_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into storage_data_field_info (id, collectName, collectSize, 
+      dataCount, dataSize, indexSize, 
+      storageSize, avgObjSize, datetime, 
+      expectDay, expectGrowth, percentCount, 
+      percentSize, dataType, cname)
+    values 
+      <foreach collection="infos"  item="item" index="index" separator=",">
+         (#{item.id,jdbcType=VARCHAR}, #{item.collectname,jdbcType=VARCHAR},
+          #{item.collectsize,jdbcType=DOUBLE}, #{item.datacount,jdbcType=DOUBLE},
+          #{item.datasize,jdbcType=DOUBLE}, #{item.indexsize,jdbcType=DOUBLE}, 
+	      #{item.storagesize,jdbcType=DOUBLE}, #{item.avgobjsize,jdbcType=DOUBLE},
+	      #{item.datetime,jdbcType=BIGINT}, #{item.expectday,jdbcType=DOUBLE},
+	      #{item.expectgrowth,jdbcType=DOUBLE}, #{item.percentcount,jdbcType=DOUBLE}, 
+	      #{item.percentsize,jdbcType=DOUBLE}, #{item.datatype,jdbcType=VARCHAR},
+	      #{item.cname,jdbcType=VARCHAR})
+      </foreach>
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.hc.entity.storage.dataField.StorageDataFieldInfo" >
+    insert into storage_data_field_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="collectname != null" >
+        collectName,
+      </if>
+      <if test="collectsize != null" >
+        collectSize,
+      </if>
+      <if test="datacount != null" >
+        dataCount,
+      </if>
+      <if test="datasize != null" >
+        dataSize,
+      </if>
+      <if test="indexsize != null" >
+        indexSize,
+      </if>
+      <if test="storagesize != null" >
+        storageSize,
+      </if>
+      <if test="avgobjsize != null" >
+        avgObjSize,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="expectday != null" >
+        expectDay,
+      </if>
+      <if test="expectgrowth != null" >
+        expectGrowth,
+      </if>
+      <if test="percentcount != null" >
+        percentCount,
+      </if>
+      <if test="percentsize != null" >
+        percentSize,
+      </if>
+      <if test="datatype != null" >
+        dataType,
+      </if>
+      <if test="cname != null" >
+        cname, 
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="collectname != null" >
+        #{collectname,jdbcType=VARCHAR},
+      </if>
+      <if test="collectsize != null" >
+        #{collectsize,jdbcType=DOUBLE},
+      </if>
+      <if test="datacount != null" >
+        #{datacount,jdbcType=DOUBLE},
+      </if>
+      <if test="datasize != null" >
+        #{datasize,jdbcType=DOUBLE},
+      </if>
+      <if test="indexsize != null" >
+        #{indexsize,jdbcType=DOUBLE},
+      </if>
+      <if test="storagesize != null" >
+        #{storagesize,jdbcType=DOUBLE},
+      </if>
+      <if test="avgobjsize != null" >
+        #{avgobjsize,jdbcType=DOUBLE},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=BIGINT},
+      </if>
+      <if test="expectday != null" >
+        #{expectday,jdbcType=DOUBLE},
+      </if>
+      <if test="expectgrowth != null" >
+        #{expectgrowth,jdbcType=DOUBLE},
+      </if>
+      <if test="percentcount != null" >
+        #{percentcount,jdbcType=DOUBLE},
+      </if>
+      <if test="percentsize != null" >
+        #{percentsize,jdbcType=DOUBLE},
+      </if>
+      <if test="datatype != null" >
+        #{datatype,jdbcType=VARCHAR},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hc.entity.storage.dataField.StorageDataFieldInfo" >
+    update storage_data_field_info
+    <set >
+      <if test="collectsize != null" >
+        collectSize = #{collectsize,jdbcType=DOUBLE},
+      </if>
+      <if test="datacount != null" >
+        dataCount = #{datacount,jdbcType=DOUBLE},
+      </if>
+      <if test="datasize != null" >
+        dataSize = #{datasize,jdbcType=DOUBLE},
+      </if>
+      <if test="indexsize != null" >
+        indexSize = #{indexsize,jdbcType=DOUBLE},
+      </if>
+      <if test="storagesize != null" >
+        storageSize = #{storagesize,jdbcType=DOUBLE},
+      </if>
+      <if test="avgobjsize != null" >
+        avgObjSize = #{avgobjsize,jdbcType=DOUBLE},
+      </if>
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=BIGINT},
+      </if>
+      <if test="expectday != null" >
+        expectDay = #{expectday,jdbcType=DOUBLE},
+      </if>
+      <if test="expectgrowth != null" >
+        expectGrowth = #{expectgrowth,jdbcType=DOUBLE},
+      </if>
+      <if test="percentcount != null" >
+        percentCount = #{percentcount,jdbcType=DOUBLE},
+      </if>
+      <if test="percentsize != null" >
+        percentSize = #{percentsize,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+      and collectName = #{collectname,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.service.record.ServiceUrlUpdateRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.service.record.ServiceUrlUpdateRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="datetime" property="datetime" jdbcType="BIGINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.hc.entity.service.record.ServiceUrlUpdateRecord" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, datetime, title, author, url, type
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  
+  <insert id="insertBatch" parameterType="java.util.List">
+      insert into service_url_update_records (
+      datetime, title, author, url, content, type)
+      values
+      <foreach collection="records"  item="item" index="index" separator=",">
+          (#{item.datetime,jdbcType=BIGINT}, #{item.title,jdbcType=VARCHAR}, 
+      	   #{item.author,jdbcType=VARCHAR}, #{item.url,jdbcType=VARCHAR},
+      	   #{item.content,jdbcType=LONGVARCHAR}, #{item.type,jdbcType=SMALLINT})
+      </foreach>
+  </insert>
+  
+  <update id="updateOne" parameterType="com.hc.entity.service.record.ServiceUrlUpdateRecord" >
+    update service_url_update_records
+    <set >
+      <if test="datetime != null" >
+        datetime = #{datetime,jdbcType=BIGINT},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectAll" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from service_url_update_records
+    <where>
+    	1=1
+    	<if test="year != null">
+    		and year(FROM_UNIXTIME(datetime/1000,'%Y-%m-%d %H:%i:%s')) = #{year,jdbcType=INTEGER}
+    		<if test="month != null">
+    			and month(FROM_UNIXTIME(datetime/1000,'%Y-%m-%d %H:%i:%s')) = #{month,jdbcType=INTEGER}
+   				<if test="day != null">
+   					and day(FROM_UNIXTIME(datetime/1000,'%Y-%m-%d %H:%i:%s')) = #{day,jdbcType=INTEGER}
+   				</if>
+    		</if>
+    	</if>
+    	<if test="record.title != null">
+			and title like #{record.title,jdbcType=VARCHAR}   	
+    	</if>
+    	<if test="record.author != null">
+    	 	and author like #{record.author,jdbcType=VARCHAR}
+    	</if>
+    	<if test = "record.url != null">
+    		and url like #{record.url,jdbcType=VARCHAR}
+    	</if>
+    	<if test="record.id != null">
+    		and 
+    		((datetime = #{record.datetime,jdbcType=BIGINT} and id > #{record.id,jdbcType=INTEGER}) 
+    		or
+    		datetime &lt; #{record.datetime,jdbcType=BIGINT})
+    	</if>
+    </where>
+    order by datetime desc, id asc
+    limit 0, #{pageSize,jdbcType=INTEGER}
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from service_url_update_records
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hc.entity.service.record.ServiceUrlUpdateRecord" >
+    insert into service_url_update_records (id, datetime, title, 
+      author, url, content
+      )
+    values (#{id,jdbcType=INTEGER}, #{datetime,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, 
+      #{author,jdbcType=VARCHAR}, #{url,jdbcType=VARCHAR}, #{content,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.hc.entity.service.record.ServiceUrlUpdateRecord" >
+    insert into service_url_update_records
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="datetime != null" >
+        datetime,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="author != null" >
+        author,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="datetime != null" >
+        #{datetime,jdbcType=BIGINT},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hc.entity.service.record.ServiceUrlUpdateRecord" >
+    update service_url_update_records
+    set datetime = #{datetime,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hc.entity.service.record.ServiceUrlUpdateRecord" >
+    update service_url_update_records
+    set datetime = #{datetime,jdbcType=BIGINT},
+      title = #{title,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      url = #{url,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

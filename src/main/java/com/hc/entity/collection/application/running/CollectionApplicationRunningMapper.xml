@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.collection.application.running.CollectionApplicationRunningMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.collection.application.running.CollectionApplicationRunning" >
+    <id column="pid" property="pid" jdbcType="INTEGER" />
+    <id column="csid" property="csid" jdbcType="VARCHAR" />
+    <result column="caName" property="caName" jdbcType="VARCHAR" />
+    <result column="caVersion" property="caVersion" jdbcType="VARCHAR" />
+    <result column="usedCpu" property="usedCpu" jdbcType="REAL" />
+    <result column="usedMemory" property="usedMemory" jdbcType="REAL" />
+    <result column="upload" property="upload" jdbcType="REAL" />
+    <result column="download" property="download" jdbcType="REAL" />
+    <result column="readSpeed" property="readSpeed" jdbcType="REAL" />
+    <result column="writeSpeed" property="writeSpeed" jdbcType="REAL" />
+    <result column="isUsed" property="isUsed" jdbcType="SMALLINT" />
+    <association property="ca" javaType="com.hc.entity.collection.application.CollectionApplication">
+		<id column="ca_egName" property="egName" jdbcType="VARCHAR" />
+	    <id column="ca_version" property="version" jdbcType="VARCHAR" />
+	    <result column="ca_chName" property="chName" jdbcType="VARCHAR" />
+	    <result column="ca_author" property="author" jdbcType="VARCHAR" />
+	    <result column="ca_description" property="description" jdbcType="VARCHAR" />
+	    <result column="ca_minVersion" property="minVersion" jdbcType="INTEGER" />
+	    <result column="ca_config" property="config" jdbcType="VARCHAR" />
+ </association>
+    <collection property="cts" ofType="com.hc.entity.collection.task.CollectionTask">
+    	<id column="ct_ctid" property="ctid" jdbcType="VARCHAR" />
+    	<id column="ct_csid" property="csid" jdbcType="VARCHAR" />
+    	<result column="ct_caName" property="caName" jdbcType="VARCHAR" />
+    	<result column="ct_caVersion" property="caVersion" jdbcType="VARCHAR" />
+	    <result column="ct_name" property="name" jdbcType="VARCHAR" />
+	    <result column="ct_status" property="status" jdbcType="VARCHAR" />
+	    <result column="ct_lastExecuteTime" property="lastExecuteTime" jdbcType="BIGINT" />
+	    <result column="ct_totalDataSourceNum" property="totalDataSourceNum" jdbcType="INTEGER" />
+	    <result column="ct_totalDataSourceSize" property="totalDataSourceSize" jdbcType="BIGINT" />
+	    <result column="ct_totalDataResultNum" property="totalDataResultNum" jdbcType="INTEGER" />
+	    <result column="ct_totalDataResultSize" property="totalDataResultSize" jdbcType="BIGINT" />
+	    <result column="ct_config" property="config" jdbcType="VARCHAR" />
+	    <result column="ct_label" property="label" jdbcType="VARCHAR" />
+	    <result column="ct_isUsed" property="isUsed" jdbcType="SMALLINT" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pid, csid, caName, caVersion, usedCpu, usedMemory, upload, download, readSpeed, writeSpeed, isUsed
+  </sql>
+  
+  <sql id="All_Column_List" >
+  	car.pid, car.csid, car.caName, car.caVersion, car.usedCpu, car.usedMemory, car.upload,
+  	car.download, car.readSpeed, car.writeSpeed, car.isUsed,
+  	ca.egName ca_egName, ca.version ca_version, ca.chName ca_chName, ca.author ca_author,
+  	ca.description ca_description, ca.minVersion ca_minVersion, ca.config ca_config,
+  	ct.ctid ct_ctid, ct.csid ct_csid, ct.caName ct_caName, ct.caVersion ct_caVersion,
+    ct.name ct_name, ct.status ct_status, ct.lastExecuteTime ct_lastExecuteTime,
+    ct.totalDataSourceNum ct_totalDataSourceNum, 
+    ct.totalDataSourceSize ct_totalDataSourceSize, ct.totalDataResultNum ct_totalDataResultNum,
+    ct.totalDataResultSize ct_totalDataResultSize,
+    ct.config ct_config, ct.label ct_label
+  </sql>
+  
+  <select id="selectAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from collection_application_running
+    <where>
+    	1=1
+    	<if test="csid != null">
+    		and csid = #{csid,jdbcType=VARCHAR}
+    	</if>
+    	<if test="isUsed != null">
+    		and isUsed = #{isUsed,jdbcType=SMALLINT}
+    	</if>
+    </where>
+  </select>
+  
+  <select id="selectByMultiCondition" resultMap="BaseResultMap">
+    select 
+    <include refid="All_Column_List" />
+    from collection_application_running car
+    left join collection_application ca on
+    (car.caName = ca.egName and car.caVersion = ca.version)
+    left join collection_task ct on 
+    (ct.csid = car.csid and ct.caName = car.caName and ct.caVersion = car.caVersion)
+    <where>
+	    <if test="mcv.csids != null and mcv.csids.size() > 0">
+	    	car.csid in
+	    	<foreach collection="mcv.csids" item="item" open="(" separator="," close=") and">  
+			    #{item}
+			</foreach>
+	    </if>
+	    <if test="mcv.cas != null and mcv.cas.size() > 0">
+	    	<foreach collection="mcv.cas" item="item" open="(" separator="or" close=") and">  
+			   (car.caName = #{item.egName} and car.caVersion = #{item.version})
+			</foreach>
+	    </if>
+	    <if test="mcv.cts != null and mcv.cts.size() > 0">
+	    	<foreach collection="mcv.cts" item="item" open="(" separator="or" close=") and">  
+			    (ct.ctid = #{item.ctid} and ct.csid = #{item.csid})
+			</foreach>
+	    </if>
+	    <if test="mcv.statuss != null and mcv.statuss.size() > 0">
+	    	ct.status in
+	    	<foreach collection="mcv.statuss" item="item" open="(" separator="," close=") and">  
+			    #{item}
+			</foreach>
+	    </if>
+	    <if test="mcv.labels != null and mcv.labels.size() > 0">
+	    	ct.label in
+	    	<foreach collection="mcv.labels" item="item" open="(" separator="," close=") and">  
+			    #{item}
+			</foreach>
+	    </if>
+	    ct.lastExecuteTime between #{mcv.starttime,jdbcType=BIGINT}
+	    and #{mcv.endtime,jdbcType=BIGINT}
+	    <if test="isUsedCar != null">
+	    	and car.isUsed = #{isUsedCar,jdbcType=SMALLINT} 
+	    </if>
+	    <if test="isUsedCt != null">
+	  	    and ct.isUsed = #{isUsedCt,jdbcType=SMALLINT} 
+	    </if>
+    </where>
+    order by ca.chName asc
+  </select>
+  
+  <insert id="insertBatch" parameterType="com.hc.entity.collection.application.running.CollectionApplicationRunning" >
+    insert into collection_application_running (pid, csid, caName, 
+      caVersion, usedCpu, usedMemory, 
+      upload, download, readSpeed, 
+      writeSpeed)
+    values
+    <foreach collection="insertCars"  item="item" index="index" separator=",">
+      (#{item.pid,jdbcType=INTEGER}, #{item.csid,jdbcType=VARCHAR}, #{item.caName,jdbcType=VARCHAR}, 
+      #{item.caVersion,jdbcType=VARCHAR}, #{item.usedCpu,jdbcType=REAL}, #{item.usedMemory,jdbcType=REAL}, 
+      #{item.upload,jdbcType=REAL}, #{item.download,jdbcType=REAL}, #{item.readSpeed,jdbcType=REAL}, 
+      #{item.writeSpeed,jdbcType=REAL})
+    </foreach>
+  </insert>
+  
+  <update id="updateSelectiveBatch" parameterType="com.hc.entity.collection.application.running.CollectionApplicationRunning" >
+    <foreach collection="updateCars" item="item" index="index" separator=";">   
+	    update collection_application_running
+	   	<set >
+	      <if test="item.caName != null" >
+	        caName = #{item.caName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.caVersion != null" >
+	        caVersion = #{item.caVersion,jdbcType=VARCHAR},
+	      </if>
+	      <if test="item.usedCpu != null" >
+	        usedCpu = #{item.usedCpu,jdbcType=REAL},
+	      </if>
+	      <if test="item.usedMemory != null" >
+	        usedMemory = #{item.usedMemory,jdbcType=REAL},
+	      </if>
+	      <if test="item.upload != null" >
+	        upload = #{item.upload,jdbcType=REAL},
+	      </if>
+	      <if test="item.download != null" >
+	        download = #{item.download,jdbcType=REAL},
+	      </if>
+	      <if test="item.readSpeed != null" >
+	        readSpeed = #{item.readSpeed,jdbcType=REAL},
+	      </if>
+	      <if test="item.writeSpeed != null" >
+	        writeSpeed = #{item.writeSpeed,jdbcType=REAL},
+	      </if>
+	    </set>
+	    where pid = #{item.pid,jdbcType=INTEGER}
+     	   and csid = #{item.csid,jdbcType=VARCHAR}
+ 	</foreach>
+  </update>
+  
+  <delete id="deleteByPrimaryKey" parameterType="com.hc.entity.collection.application.running.CollectionApplicationRunningKey" >
+    delete from collection_application_running
+    where pid = #{pid,jdbcType=INTEGER}
+      and csid = #{csid,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.hc.entity.collection.application.running.CollectionApplicationRunning" >
+    insert into collection_application_running
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="csid != null" >
+        csid,
+      </if>
+      <if test="caname != null" >
+        caName,
+      </if>
+      <if test="caversion != null" >
+        caVersion,
+      </if>
+      <if test="usedcpu != null" >
+        usedCpu,
+      </if>
+      <if test="usedmemory != null" >
+        usedMemory,
+      </if>
+      <if test="upload != null" >
+        upload,
+      </if>
+      <if test="download != null" >
+        download,
+      </if>
+      <if test="readspeed != null" >
+        readSpeed,
+      </if>
+      <if test="writespeed != null" >
+        writeSpeed,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="csid != null" >
+        #{csid,jdbcType=VARCHAR},
+      </if>
+      <if test="caname != null" >
+        #{caname,jdbcType=VARCHAR},
+      </if>
+      <if test="caversion != null" >
+        #{caversion,jdbcType=VARCHAR},
+      </if>
+      <if test="usedcpu != null" >
+        #{usedcpu,jdbcType=REAL},
+      </if>
+      <if test="usedmemory != null" >
+        #{usedmemory,jdbcType=REAL},
+      </if>
+      <if test="upload != null" >
+        #{upload,jdbcType=REAL},
+      </if>
+      <if test="download != null" >
+        #{download,jdbcType=REAL},
+      </if>
+      <if test="readspeed != null" >
+        #{readspeed,jdbcType=REAL},
+      </if>
+      <if test="writespeed != null" >
+        #{writespeed,jdbcType=REAL},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByPrimaryKey" parameterType="com.hc.entity.collection.application.running.CollectionApplicationRunning" >
+    update collection_application_running
+    set caName = #{caname,jdbcType=VARCHAR},
+      caVersion = #{caversion,jdbcType=VARCHAR},
+      usedCpu = #{usedcpu,jdbcType=REAL},
+      usedMemory = #{usedmemory,jdbcType=REAL},
+      upload = #{upload,jdbcType=REAL},
+      download = #{download,jdbcType=REAL},
+      readSpeed = #{readspeed,jdbcType=REAL},
+      writeSpeed = #{writespeed,jdbcType=REAL}
+    where pid = #{pid,jdbcType=INTEGER}
+      and csid = #{csid,jdbcType=VARCHAR}
+  </update>
+</mapper>

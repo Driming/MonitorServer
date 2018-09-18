@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.collection.server.CollectionServerMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.collection.server.CollectionServer" >
+    <id column="csid" property="csid" jdbcType="VARCHAR" />
+    <result column="server" property="server" jdbcType="VARCHAR" />	
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="isUsed" property="isUsed" jdbcType="VARCHAR" />
+    <collection property="cas" ofType="com.hc.entity.collection.application.CollectionApplication">
+    	<id column="ca_version" property="version" jdbcType="VARCHAR" />
+	    <id column="ca_egName" property="egName" jdbcType="VARCHAR" />
+	    <result column="ca_chName" property="chName" jdbcType="VARCHAR" />
+	    <result column="ca_author" property="author" jdbcType="VARCHAR" />
+	    <result column="ca_description" property="description" jdbcType="VARCHAR" />
+	    <result column="ca_minVersion" property="minVersion" jdbcType="INTEGER" />
+	    <result column="ca_isUsed" property="isUsed" jdbcType="SMALLINT" />
+    </collection>
+    <collection property="cts" ofType="com.hc.entity.collection.task.CollectionTask">
+    	<id column="ct_ctid" property="ctid" jdbcType="VARCHAR" />
+    	<id column="ct_csid" property="csid" jdbcType="VARCHAR" />
+    	<result column="ct_caName" property="caName" jdbcType="VARCHAR" />
+    	<result column="ct_caVersion" property="caVersion" jdbcType="VARCHAR" />
+	    <result column="ct_name" property="name" jdbcType="VARCHAR" />
+	    <result column="ct_status" property="status" jdbcType="VARCHAR" />
+	    <result column="ct_lastExecuteTime" property="lastExecuteTime" jdbcType="BIGINT" />
+	    <result column="ct_totalDataSourceNum" property="totalDataSourceNum" jdbcType="INTEGER" />
+	    <result column="ct_totalDataSourceSize" property="totalDataSourceSize" jdbcType="BIGINT" />
+	    <result column="ct_totalDataResultNum" property="totalDataResultNum" jdbcType="INTEGER" />
+	    <result column="ct_totalDataResultSize" property="totalDataResultSize" jdbcType="BIGINT" />
+	    <result column="ct_config" property="config" jdbcType="VARCHAR" />
+	    <result column="ct_label" property="label" jdbcType="VARCHAR" />
+	    <result column="ct_isUsed" property="isUsed" jdbcType="VARCHAR" />
+	    <association property="cs" javaType="com.hc.entity.collection.server.CollectionServer">
+	    	<id column="csid" property="csid" jdbcType="VARCHAR" />
+		    <result column="server" property="server" jdbcType="VARCHAR" />	
+		    <result column="description" property="description" jdbcType="VARCHAR" />
+	    </association>
+	    <association property="ca" javaType="com.hc.entity.collection.application.CollectionApplication">
+			<id column="ca_egName" property="egName" jdbcType="VARCHAR" />
+		    <id column="ca_version" property="version" jdbcType="VARCHAR" />
+		    <result column="ca_chName" property="chName" jdbcType="VARCHAR" />
+		    <result column="ca_author" property="author" jdbcType="VARCHAR" />
+		    <result column="ca_description" property="description" jdbcType="VARCHAR" />
+		    <result column="ca_minVersion" property="minVersion" jdbcType="INTEGER" />
+	    </association>
+    </collection>
+  </resultMap>
+  
+  <resultMap id="ServerResultMap" type="com.hc.entity.collection.server.CollectionServer" >
+    <id column="csid" property="csid" jdbcType="VARCHAR" />
+    <result column="server" property="server" jdbcType="VARCHAR" />	
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="isUsed" property="isUsed" jdbcType="VARCHAR" />
+    <result column="flag" property="flag" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="name" property="name" jdbcType="SMALLINT" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    csid, server, description, type, flag, version, name
+  </sql>
+  
+  <sql id="Other_Column_List">
+  	cs.csid, cs.server, cs.description,
+    ca.egName ca_egName, ca.version ca_version, 
+    ca.chName ca_chName, ca.description ca_description,
+    ca.author ca_author, ca.minVersion ca_minVersion,
+    ct.name ct_name, ct.ctid ct_ctid,
+    ct.csid ct_csid, ct.label ct_label
+  </sql>
+  
+  <select id="selectCollectionServers" resultMap="ServerResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from collection_server
+    <where>
+        1=1
+	    <if test="isUsedCs != null">
+   			and isUsed = #{isUsedCs,jdbcType=SMALLINT}
+	    </if>
+	    <if test="type != null">
+	    	and type = #{type,jdbcType=SMALLINT}
+	    </if>
+    </where>
+  </select>
+  
+  <select id="selectCollectionServer" resultMap="ServerResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from collection_server
+    where
+    csid = #{csid,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="selectCollectionServerByCtid" resultMap="BaseResultMap">
+    select 
+    <include refid="Other_Column_List" />
+    from collection_server cs
+    left join collection_task ct on ct.csid = cs.csid
+    left join collection_application ca on (ca.egName = ct.caName and ca.version = ct.caVersion)
+    where ct.ctid = #{ctid,jdbcType=VARCHAR} and ct.csid = #{csid,jdbcType=VARCHAR}
+  </select>
+  
+  <insert id="insertCollectionServer" parameterType="com.hc.entity.collection.server.CollectionServer" >
+    insert into collection_server (csid, server, description, type, flag, version, name)
+    values (#{csid,jdbcType=VARCHAR}, #{server,jdbcType=VARCHAR},
+     #{description,jdbcType=VARCHAR}, #{type,jdbcType=SMALLINT},
+     #{flag,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
+     #{name,jdbcType=VARCHAR})
+  </insert>
+  
+  <insert id="upsert" parameterType="com.hc.entity.collection.server.CollectionServer" >
+    insert into collection_server (csid, server, description, type, flag, version, name)
+    values (#{csid,jdbcType=VARCHAR}, #{server,jdbcType=VARCHAR},
+     #{description,jdbcType=VARCHAR}, #{type,jdbcType=SMALLINT},
+     #{flag,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR},
+     #{name,jdbcType=VARCHAR})
+    on duplicate key update
+     server = #{server,jdbcType=VARCHAR},
+     type = #{type,jdbcType=SMALLINT}
+  </insert>
+  
+  <update id="updateCollectionServerSelective" parameterType="com.hc.entity.collection.server.CollectionServer" >
+    update collection_server
+    <set >
+      <if test="server != null" >
+        server = #{server,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="isUsed != null" >
+        isUsed = #{isUsed,jdbcType=SMALLINT},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=SMALLINT},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where csid = #{csid,jdbcType=VARCHAR}
+  </update>
+  
+  <insert id="insertBatch" parameterType="java.util.List" >
+    insert into collection_server (csid, server, description, type, flag, version, name)
+    values
+    <foreach collection="servers"  item="item" index="index" separator=",">
+        (#{item.csid,jdbcType=VARCHAR}, #{item.server,jdbcType=INTEGER},
+     	#{item.description,jdbcType=VARCHAR}, #{item.type,jdbcType=SMALLINT},
+     	#{item.flag,jdbcType=VARCHAR}, #{item.version,jdbcType=VARCHAR},
+     	#{item.name,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  
+  <delete id="deleteBatch" parameterType="java.util.List">
+  	delete from collection_server
+  	<where>
+	    <if test="servers.size()==0">1=0</if>
+	    <if test="servers.size() > 0">
+	    	<foreach collection="servers" item="item" open="(" separator="or" close=")">  
+	       	 	(csid = #{item.csid})  
+	    	</foreach>
+	    </if>
+    </where>
+  </delete>
+  
+  <update id="updateBatch" parameterType="java.util.List">
+	<foreach collection="servers" item="item" index="index" separator=";">   
+	    update collection_server
+	   	<set >
+      <if test="item.server != null" >
+        server = #{item.server,jdbcType=VARCHAR},
+      </if>
+      <if test="item.description != null" >
+        description = #{item.description,jdbcType=VARCHAR},
+      </if>
+      <if test="item.isUsed != null" >
+        isUsed = #{item.isUsed,jdbcType=SMALLINT},
+      </if>
+      <if test="item.type != null" >
+        type = #{item.type,jdbcType=SMALLINT},
+      </if>
+      <if test="item.flag != null" >
+        flag = #{item.flag,jdbcType=VARCHAR},
+      </if>
+      <if test="item.version != null" >
+        version = #{item.version,jdbcType=SMALLINT},
+      </if>
+      <if test="item.name != null" >
+        name = #{item.name,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where csid = #{item.csid,jdbcType=VARCHAR}
+ 	</foreach>
+  </update>
+  
+</mapper>

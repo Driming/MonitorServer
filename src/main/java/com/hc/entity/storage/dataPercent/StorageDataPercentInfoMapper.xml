@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.storage.dataPercent.StorageDataPercentInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.storage.dataPercent.StorageDataPercentInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <id column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="SMALLINT" />
+    <result column="typeName" property="typename" jdbcType="VARCHAR" />
+    <result column="collectSize" property="collectsize" jdbcType="DOUBLE" />
+    <result column="dataCount" property="datacount" jdbcType="DOUBLE" />
+    <result column="percentCount" property="percentcount" jdbcType="DOUBLE" />
+    <result column="percentSize" property="percentsize" jdbcType="DOUBLE" />
+    <result column="cname" property="cname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, type, collectSize, dataCount, percentCount, percentSize, typeName, cname
+  </sql>
+  
+  <select id="selectSizeInfos" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    cname, collectSize
+    from storage_data_percent_info
+    <where>
+    	type = 2
+    	<if test="id != null">
+   		     and id = #{id,jdbcType=VARCHAR}
+    	</if>
+    </where>
+    order by collectSize desc
+  </select>
+  
+  <select id="selectTotal" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+    name, type, typeName, cname,
+    sum(collectSize) collectSize,
+    sum(dataCount) dataCount,
+    sum(percentCount) percentCount,
+    sum(percentSize) percentSize
+    from storage_data_percent_info
+    <where>
+    	<if test="id != null">
+   		     id = #{id,jdbcType=VARCHAR}
+    	</if>
+    </where>
+    group by name
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from storage_data_percent_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into storage_data_percent_info (id, name, type, 
+      collectSize, dataCount, percentCount, 
+      percentSize, typeName, cname)
+    values 
+     <foreach collection="infos"  item="item" index="index" separator=",">
+          (#{item.id,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.type,jdbcType=SMALLINT}, 
+    	  #{item.collectsize,jdbcType=DOUBLE}, #{item.datacount,jdbcType=DOUBLE},
+    	  #{item.percentcount,jdbcType=DOUBLE}, #{item.percentsize,jdbcType=DOUBLE},
+    	  #{item.typename,jdbcType=VARCHAR}, #{item.cname,jdbcType=VARCHAR})
+      </foreach>
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.hc.entity.storage.dataPercent.StorageDataPercentInfo" >
+    insert into storage_data_percent_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="collectsize != null" >
+        collectSize,
+      </if>
+      <if test="datacount != null" >
+        dataCount,
+      </if>
+      <if test="percentcount != null" >
+        percentCount,
+      </if>
+      <if test="percentsize != null" >
+        percentSize,
+      </if>
+      <if test="typename != null" >
+        typeName,
+      </if>
+      <if test="cname != null" >
+        cname,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="collectsize != null" >
+        #{collectsize,jdbcType=DOUBLE},
+      </if>
+      <if test="datacount != null" >
+        #{datacount,jdbcType=DOUBLE},
+      </if>
+      <if test="percentcount != null" >
+        #{percentcount,jdbcType=DOUBLE},
+      </if>
+      <if test="percentsize != null" >
+        #{percentsize,jdbcType=DOUBLE},
+      </if>
+      <if test="typename != null" >
+        #{typename,jdbcType=DOUBLE},
+      </if>
+      <if test="cname != null" >
+        #{cname,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.hc.entity.storage.dataPercent.StorageDataPercentInfo" >
+    update storage_data_percent_info
+    <set >
+      <if test="type != null" >
+        type = #{type,jdbcType=SMALLINT},
+      </if>
+      <if test="collectsize != null" >
+        collectSize = #{collectsize,jdbcType=DOUBLE},
+      </if>
+      <if test="datacount != null" >
+        dataCount = #{datacount,jdbcType=DOUBLE},
+      </if>
+      <if test="percentcount != null" >
+        percentCount = #{percentcount,jdbcType=DOUBLE},
+      </if>
+      <if test="percentsize != null" >
+        percentSize = #{percentsize,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+      and name = #{name,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hc.entity.storage.space.StorageSpaceInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.hc.entity.storage.space.StorageSpaceInfo" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="dataCount" property="datacount" jdbcType="DOUBLE" />
+    <result column="dbSpace" property="dbspace" jdbcType="DOUBLE" />
+    <result column="freeSpace" property="freespace" jdbcType="DOUBLE" />
+    <result column="otherSpace" property="otherspace" jdbcType="DOUBLE" />
+    <result column="percentDbSpace" property="percentdbspace" jdbcType="DOUBLE" />
+    <result column="percentFreeSpace" property="percentfreespace" jdbcType="DOUBLE" />
+    <result column="percentOtherSpace" property="percentotherspace" jdbcType="DOUBLE" />
+    <result column="totalSpace" property="totalspace" jdbcType="DOUBLE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    si.id, si.dataCount, si.dbSpace, si.freeSpace, si.otherSpace, si.percentDbSpace, si.percentFreeSpace, 
+    si.percentOtherSpace, si.totalSpace, cs.description
+  </sql>
+  
+  <select id="selectStorageSpaceInfos" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from storage_space_info si
+    left join collection_server cs on 
+    cs.server = si.id
+    <where>
+       cs.type = 2
+       <if test="id != null">
+ 	   	   and si.id = #{id,jdbcType=VARCHAR}
+       </if>
+    </where>
+  </select>
+  
+  <insert id="insertStorageSpaceInfoSelective" parameterType="com.hc.entity.storage.space.StorageSpaceInfo" >
+    insert into storage_space_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="datacount != null" >
+        dataCount,
+      </if>
+      <if test="dbspace != null" >
+        dbSpace,
+      </if>
+      <if test="freespace != null" >
+        freeSpace,
+      </if>
+      <if test="otherspace != null" >
+        otherSpace,
+      </if>
+      <if test="percentdbspace != null" >
+        percentDbSpace,
+      </if>
+      <if test="percentfreespace != null" >
+        percentFreeSpace,
+      </if>
+      <if test="percentotherspace != null" >
+        percentOtherSpace,
+      </if>
+      <if test="totalspace != null" >
+        totalSpace,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="datacount != null" >
+        #{datacount,jdbcType=DOUBLE},
+      </if>
+      <if test="dbspace != null" >
+        #{dbspace,jdbcType=DOUBLE},
+      </if>
+      <if test="freespace != null" >
+        #{freespace,jdbcType=DOUBLE},
+      </if>
+      <if test="otherspace != null" >
+        #{otherspace,jdbcType=DOUBLE},
+      </if>
+      <if test="percentdbspace != null" >
+        #{percentdbspace,jdbcType=DOUBLE},
+      </if>
+      <if test="percentfreespace != null" >
+        #{percentfreespace,jdbcType=DOUBLE},
+      </if>
+      <if test="percentotherspace != null" >
+        #{percentotherspace,jdbcType=DOUBLE},
+      </if>
+      <if test="totalspace != null" >
+        #{totalspace,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateStorageSpaceInfoSelective" parameterType="com.hc.entity.storage.space.StorageSpaceInfo" >
+    update storage_space_info
+    <set >
+      <if test="datacount != null" >
+        dataCount = #{datacount,jdbcType=DOUBLE},
+      </if>
+      <if test="dbspace != null" >
+        dbSpace = #{dbspace,jdbcType=DOUBLE},
+      </if>
+      <if test="freespace != null" >
+        freeSpace = #{freespace,jdbcType=DOUBLE},
+      </if>
+      <if test="otherspace != null" >
+        otherSpace = #{otherspace,jdbcType=DOUBLE},
+      </if>
+      <if test="percentdbspace != null" >
+        percentDbSpace = #{percentdbspace,jdbcType=DOUBLE},
+      </if>
+      <if test="percentfreespace != null" >
+        percentFreeSpace = #{percentfreespace,jdbcType=DOUBLE},
+      </if>
+      <if test="percentotherspace != null" >
+        percentOtherSpace = #{percentotherspace,jdbcType=DOUBLE},
+      </if>
+      <if test="totalspace != null" >
+        totalSpace = #{totalspace,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

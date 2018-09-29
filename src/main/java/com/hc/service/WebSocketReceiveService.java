@@ -120,7 +120,7 @@ public class WebSocketReceiveService {
 			ch.setDataSourceSize(record.getSourceSize());
 			ch.setDataResultNum(record.getOutcomeSum());
 			ch.setDataResultSize(record.getOutcomeSize());
-			List<Error> errors = new LinkedList<Error>();
+			List<Error> errors = new LinkedList<>();
 			Error error = new Error();
 			byte[] exception = record.getException(); 
 			if(exception != null)
@@ -183,10 +183,10 @@ public class WebSocketReceiveService {
 			CollectionTaskTimePointStatus taskStatus = new CollectionTaskTimePointStatus();
 			taskStatus.setCtid(statusJson.getString("id"));
 			taskStatus.setStatus(statusJson.getString("status"));
-			taskStatus.setTimesave(statusJson.getLong("timeSave"));
-			taskStatus.setTimedelay(statusJson.getLong("timeDelay"));
-			taskStatus.setTimecurrent(statusJson.getLong("timeCurrent"));
-			collectionMonitorDao.upsertCollectionTaskTimePointStatus(taskStatus);
+			taskStatus.setTimeSave(statusJson.getLong("timeSave"));
+			taskStatus.setTimeDelay(statusJson.getLong("timeDelay"));
+			taskStatus.setTimeCurrent(statusJson.getLong("timeCurrent"));
+			collectionMonitorDao.updateCollectionTaskTimePointStatus(taskStatus);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

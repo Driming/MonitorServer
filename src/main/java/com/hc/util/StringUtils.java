@@ -4,11 +4,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JsonConfig;
 import net.sf.json.util.PropertyFilter;
+import sun.nio.cs.ext.MacThai;
 
 public class StringUtils {
 	public static String join(Object... strs) {
@@ -24,14 +26,14 @@ public class StringUtils {
 		return path;
 	}
 	
-	public static boolean isStandardVaule(String val, String[] vals) {
+	public static boolean isStandardValue(String val, String[] vals) {
 		for (String str : vals)
 			if (val.equalsIgnoreCase(str))
 				return true;
 		return false;
 	}
 	
-	public static boolean isContainVaule(Integer val, List<Integer> vals) {
+	public static boolean isContainValue(Integer val, List<Integer> vals) {
 		for (Integer valEle : vals)
 			if (val != null && val.equals(valEle))
 				return true;
@@ -39,19 +41,29 @@ public class StringUtils {
 	}
 	
 	public static List<Integer> strToNum(String[] strs) {
-		List<Integer> ins = new ArrayList<Integer>();
-		for(int i=0; i<strs.length; i++)
+		List<Integer> ins = new ArrayList<>();
+		for(int i=0; i<strs.length; i++){
 			try{
 				ins.add(Integer.valueOf(strs[i]));
 			}catch(Exception e){
+				e.printStackTrace();
 			}
+		}
 		return ins;
 	}
 	
 	public static Integer createId(int size) {
 		StringBuffer strBuff = new StringBuffer();
-		for (int i = 0; i < size; i++)
+		int a=0;
+		while(a==0){
+			a=(int) Math.floor(Math.random() * 10);	//避免首位数字为零从而令int变量变成八进制
+		}
+		strBuff.append(a);
+		for (int i = 1; i < size; i++){
 			strBuff.append((int) Math.floor(Math.random() * 10));
+		}
+		/*for (int i = 0; i < size; i++)
+			strBuff.append((int) Math.floor(Math.random() * 10));*/
 		return Integer.valueOf(strBuff.toString());
 	}
 	
@@ -72,17 +84,21 @@ public class StringUtils {
                    inet = InetAddress.getLocalHost();     
                } catch (UnknownHostException e) {     
                    e.printStackTrace();     
-               }     
-               ip= inet.getHostAddress();     
-           }  
+               }
+			   try {
+				   ip= inet.getHostAddress();
+			   } catch (Exception e) {
+				   e.printStackTrace();
+			   }
+		   }
        }   
        // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割  
-       if(ip != null && ip.length() > 15){    
-           if(ip.indexOf(",")>0){     
+       if(ip != null && ip.length() > 15){
+           if(ip.indexOf(",")>0){
                ip = ip.substring(0,ip.indexOf(","));     
-           }     
-       }     
-       return ip;   
+           }
+       }
+       return ip;
 	}  
 	
 	public static JsonConfig jsonIgnoreNull(){

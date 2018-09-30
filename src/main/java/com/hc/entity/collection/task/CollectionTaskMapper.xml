@@ -1,314 +1,312 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hc.entity.collection.task.CollectionTaskMapper" >
-  <resultMap id="BaseResultMap" type="com.hc.entity.collection.task.CollectionTask" >
-    <id column="ctid" property="ctid" jdbcType="VARCHAR" />
-    <id column="csid" property="csid" jdbcType="VARCHAR" />
-    <result column="caName" property="caName" jdbcType="VARCHAR" />    
-    <result column="caVersion" property="caVersion" jdbcType="VARCHAR" />
-    <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="status" property="status" jdbcType="VARCHAR" />
-    <result column="lastExecuteTime" property="lastExecuteTime" jdbcType="BIGINT" />
-    <result column="totalDataSourceNum" property="totalDataSourceNum" jdbcType="INTEGER" />
-    <result column="totalDataSourceSize" property="totalDataSourceSize" jdbcType="BIGINT" />
-    <result column="totalDataResultNum" property="totalDataResultNum" jdbcType="INTEGER" />
-    <result column="totalDataResultSize" property="totalDataResultSize" jdbcType="BIGINT" />
-    <result column="config" property="config" jdbcType="VARCHAR" />
-    <result column="collectConfig" property="collectConfig" jdbcType="VARCHAR" />
-    <result column="type" property="type" jdbcType="VARCHAR" />
-    <result column="utc" property="utc" jdbcType="SMALLINT" />
-    <result column="label" property="label" jdbcType="VARCHAR" />
-    <result column="isUsed" property="isUsed" jdbcType="SMALLINT" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    ct.ctid, ct.csid, ct.name, ct.status, ct.lastExecuteTime, ct.totalDataSourceNum,
-    ct.totalDataSourceSize, ct.totalDataResultNum, ct.totalDataResultSize, ct.config,
-    ct.label, ct.caName, ct.caVersion
-  </sql>
-  
-  <select id="selectCollectionTasks" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from collection_task ct
-    <where>
-    	1=1
-       <if test="csid != null">
-	  	 and ct.csid = #{csid,jdbcType=VARCHAR}
-   	   </if>
-   	   <if test="label != null">
-   	   	 and ct.label = #{label,jdbcType=VARCHAR}
-   	   </if>
-   	   <if test="caName != null">
-   	     and ct.caName = #{caName,jdbcType=VARCHAR}
-   	   </if>
-   	   <if test="caVersion != null">
-   	     and ct.caVersion = #{caVersion,jdbcType=VARCHAR}
-   	   </if>
-   	   <if test="isUsedCt != null">
-   	   	 and ct.isUsed = #{isUsedCt,jdbcType=SMALLINT}
-   	   </if>	
-    </where>
-  </select>
-  
-  <select id="selectCollectionTaskByHistoryUpdate" resultMap="BaseResultMap" parameterType="java.lang.String" >
-    select
-    ctid, csid, status, lastExecuteTime, totalDataSourceNum,
-    totalDataSourceSize, totalDataResultNum, totalDataResultSize
-    from collection_task
-    where ctid = #{ctid,jdbcType=VARCHAR}
-    and csid = #{csid,jdbcType=VARCHAR}
-  </select>
-  
-  <select id="selectAllDistinctTaskLabels" resultType="string">
-    select
-    distinct(label)
-    from collection_task
-   	where 
-   	label is not null
-   	<if test="isUsedCt != null">
-   		and isUsed = #{isUsedCt,jdbcType=SMALLINT}
-   	</if>
-  </select>
-  
-  <select id="selectAllNotLabelTasks" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from collection_task ct
-   	where ct.label is null
-   	<if test="isUsedCt != null">
-   	    and ct.isUsed = #{isUsedCt,jdbcType=SMALLINT}
-   	</if>
-  </select>
-  
-  <update id="updateCollectionTaskSelective" parameterType="com.hc.entity.collection.task.CollectionTask" >
-    update collection_task
-    <set>
-      <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null" >
-        status = #{status,jdbcType=VARCHAR},
-      </if>
-      <if test="lastExecuteTime != null" >
-        lastExecuteTime = #{lastExecuteTime,jdbcType=BIGINT},
-      </if>
-      <if test="totalDataSourceNum != null" >
-        totalDataSourceNum = #{totalDataSourceNum,jdbcType=INTEGER},
-      </if>
-      <if test="totalDataSourceSize != null" >
-        totalDataSourceSize = #{totalDataSourceSize,jdbcType=BIGINT},
-      </if>
-      <if test="totalDataResultNum != null" >
-        totalDataResultNum = #{totalDataResultNum,jdbcType=INTEGER},
-      </if>
-      <if test="totalDataResultSize != null" >
-        totalDataResultSize = #{totalDataResultSize,jdbcType=BIGINT},
-      </if>
-      <if test="config != null" >
-        config = #{config,jdbcType=VARCHAR},
-      </if>
-      <if test="label != null" >
-        label = #{label,jdbcType=VARCHAR},
-      </if>
-      <if test="isUsed != null" >
-        isUsed = #{isUsed,jdbcType=SMALLINT},
-      </if>
-      <if test="caName != null" >
-        caName = #{caName,jdbcType=SMALLINT},
-      </if>
-      <if test="caVersion != null" >
-        caVersion = #{caVersion,jdbcType=SMALLINT},
-      </if>
-      <if test="statusReason != null" >
-        statusReason = #{statusReason,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where ctid = #{ctid,jdbcType=VARCHAR} 
-    and csid = #{csid,jdbcType=VARCHAR} 
-  </update>
-  
-  <insert id="insertCollectionTaskSelective" parameterType="com.hc.entity.collection.task.CollectionTask">
-     insert into collection_task
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="ctid != null" >
-        ctid,
-      </if>
-      <if test="csid != null" >
-        csid,
-      </if>
-      <if test="caName != null" >
-        caName,
-      </if>
-      <if test="caVersion != null" >
-        caVersion,
-      </if>
-      <if test="name != null" >
-        name,
-      </if>
-      <if test="status != null" >
-        status,
-      </if>
-      <if test="lastExecuteTime != null" >
-        lastExecuteTime,
-      </if>
-      <if test="totalDataSourceNum != null" >
-        totalDataSourceNum,
-      </if>
-      <if test="totalDataSourceSize != null" >
-        totalDataSourceSize,
-      </if>
-      <if test="totalDataResultNum != null" >
-        totalDataResultNum,
-      </if>
-      <if test="totalDataResultSize != null" >
-        totalDataResultSize,
-      </if>
-      <if test="label != null" >
-        label,
-      </if>
-      <if test="config != null" >
-        config,
-      </if>
-      <if test="isUsed != null" >
-        isUsed,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="ctid != null" >
-        #{ctid,jdbcType=VARCHAR},
-      </if>
-      <if test="csid != null" >
-        #{csid,jdbcType=VARCHAR},
-      </if>
-      <if test="caName != null" >
-        #{caName,jdbcType=VARCHAR},
-      </if>
-      <if test="caVersion != null" >
-        #{caVersion,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null" >
-        #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null" >
-        #{status,jdbcType=VARCHAR},
-      </if>
-      <if test="lastExecuteTime != null" >
-        #{lastExecuteTime,jdbcType=BIGINT},
-      </if>
-      <if test="totalDataSourceNum != null" >
-        #{totalDataSourceNum,jdbcType=INTEGER},
-      </if>
-      <if test="totalDataSourceSize != null" >
-        #{totalDataSourceSize,jdbcType=BIGINT},
-      </if>
-      <if test="totalDataResultNum != null" >
-        #{totalDataResultNum,jdbcType=INTEGER},
-      </if>
-      <if test="totalDataResultSize != null" >
-        #{totalDataResultSize,jdbcType=BIGINT},
-      </if>
-      <if test="label != null" >
-        #{label,jdbcType=VARCHAR},
-      </if>
-      <if test="config != null" >
-        #{config,jdbcType=VARCHAR},
-      </if>
-      <if test="isUsed != null" >
-        #{isUsed,jdbcType=SMALLINT},
-      </if>
-    </trim>
-  </insert>
-  
-  <insert id="insertCollectionTaskBatch" parameterType="java.util.List">
-      insert into collection_task (ctid, name, 
-      status, lastExecuteTime, config, csid, 
-      caName, caVersion, collectConfig,
-      type, utc)
-      values
-      <foreach collection="insertCts"  item="item" index="index" separator=",">
-          (#{item.ctid,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, 
-	      #{item.status,jdbcType=VARCHAR}, #{item.lastExecuteTime,jdbcType=BIGINT},
-	      #{item.config,jdbcType=VARCHAR},  
-	      #{item.csid,jdbcType=VARCHAR}, #{item.caName,jdbcType=VARCHAR},
-	      #{item.caVersion,jdbcType=VARCHAR}, #{item.collectConfig,jdbcType=VARCHAR},
-	      #{item.type,jdbcType=VARCHAR}, #{item.utc,jdbcType=SMALLINT})
-      </foreach>
-  </insert>
-  
-  <delete id="deleteCollectionTaskBatch">
-  	delete from collection_task
-  	<where>
-	    <if test="removeCts.size()==0">1=0</if>
-	    <if test="removeCts.size() > 0">
-	    	<foreach collection="removeCts" item="item" open="(" separator="or" close=")">  
-	       	 	(ctid = #{item.ctid} and csid = #{item.csid})
-	    	</foreach>
-	    </if>
-    </where>
-  </delete>
-  
-  <update id="updateCollectionTaskBatch" parameterType="java.util.List">
-	<foreach collection="updateCts" item="item" index="index" separator=";">   
-	    update collection_task
-	   	 <set>
-		      <if test="item.name != null" >
-		        name = #{item.name,jdbcType=VARCHAR},
-		      </if>
-		      <if test="item.status != null" >
-		        status = #{item.status,jdbcType=VARCHAR},
-		      </if>
-		      <if test="item.lastExecuteTime != null" >
-		        lastExecuteTime = #{item.lastExecuteTime,jdbcType=BIGINT},
-		      </if>
-		      <if test="item.totalDataSourceNum != null" >
-		        totalDataSourceNum = #{item.totalDataSourceNum,jdbcType=INTEGER},
-		      </if>
-		      <if test="item.totalDataSourceSize != null" >
-		        totalDataSourceSize = #{item.totalDataSourceSize,jdbcType=BIGINT},
-		      </if>
-		      <if test="item.totalDataResultNum != null" >
-		        totalDataResultNum = #{item.totalDataResultNum,jdbcType=INTEGER},
-		      </if>
-		      <if test="item.totalDataResultSize != null" >
-		        totalDataResultSize = #{item.totalDataResultSize,jdbcType=BIGINT},
-		      </if>
-		      <if test="item.config != null" >
-		        config = #{item.config,jdbcType=VARCHAR},
-		      </if>
-		      <if test="item.caName != null" >
-		        caName = #{item.caName,jdbcType=VARCHAR},
-		      </if>
-		      <if test="item.caVersion != null" >
-		        caVersion = #{item.caVersion,jdbcType=VARCHAR},
-		      </if>
-		      <if test="item.isUsed != null" >
-		        isUsed = #{item.isUsed,jdbcType=VARCHAR},
-		      </if>
-		      <if test="item.collectConfig != null" >
-		        collectConfig = #{item.collectConfig,jdbcType=VARCHAR},
-		      </if>
-		      <if test="item.type != null" >
-		        type = #{item.type,jdbcType=VARCHAR},
-		      </if>
-		      <if test="item.utc != null" >
-		        utc = #{item.utc,jdbcType=SMALLINT},
-		      </if>
-	     </set>
-	    where ctid = #{item.ctid,jdbcType=VARCHAR}  
-	    and csid = #{item.csid,jdbcType=VARCHAR}  
- 	</foreach>
-  </update>
-  
-  <update id="updateCollectionTaskByHistory" parameterType="com.hc.entity.collection.history.CollectionHistory" >
-    update collection_task
-    set 
-      lastExecuteTime = #{time,jdbcType=BIGINT},
-      totalDataSourceNum = (totalDataSourceNum + #{dataSourceNum,jdbcType=INTEGER}),
-      totalDataSourceSize = (totalDataSourceSize + #{dataSourceSize,jdbcType=BIGINT}),
-      totalDataResultNum = (totalDataResultNum + #{dataResultNum,jdbcType=INTEGER}),
-      totalDataResultSize = (totalDataResultSize + #{dataResultSize,jdbcType=BIGINT})
-    where ctid = #{ctid,jdbcType=VARCHAR}
-    and csid = #{csid,jdbcType=VARCHAR}
-  </update>
-  
+<mapper namespace="com.hc.entity.collection.task.CollectionTaskMapper">
+    <resultMap id="BaseResultMap" type="com.hc.entity.collection.task.CollectionTask">
+        <id column="ctid" property="ctid" jdbcType="VARCHAR"/>
+        <id column="csid" property="csid" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="driverName" property="driverName" jdbcType="VARCHAR"/>
+        <result column="driverVersion" property="driverVersion" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="config" property="config" jdbcType="VARCHAR"/>
+        <result column="dispatchConfig" property="dispatchConfig" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="statusReason" property="statusReason" jdbcType="VARCHAR"/>
+        <result column="lastExecuteTime" property="lastExecuteTime" jdbcType="BIGINT"/>
+        <result column="totalDataSourceNum" property="totalDataSourceNum" jdbcType="BIGINT"/>
+        <result column="totalDataSourceSize" property="totalDataSourceSize" jdbcType="DOUBLE"/>
+        <result column="totalDataResultNum" property="totalDataResultNum" jdbcType="BIGINT"/>
+        <result column="totalDataResultSize" property="totalDataResultSize" jdbcType="DOUBLE"/>
+        <result column="label" property="label" jdbcType="VARCHAR"/>
+        <result column="isUsed" property="isUsed" jdbcType="SMALLINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ct.ctid, ct.csid, ct.name, ct.status, ct.config, ct.dispatchConfig, ct.lastExecuteTime, ct.totalDataSourceNum,
+        ct.totalDataSourceSize, ct.totalDataResultNum, ct.totalDataResultSize, ct.statusReason,
+        ct.label, ct.driverName, ct.driverVersion
+    </sql>
+
+    <select id="selectCollectionTasks" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from collection_task ct
+        <where>
+            1=1
+            <if test="csid != null">
+                and ct.csid = #{csid,jdbcType=VARCHAR}
+            </if>
+            <if test="label != null">
+                and ct.label = #{label,jdbcType=VARCHAR}
+            </if>
+            <if test="driverName != null">
+                and ct.driverName = #{driverName,jdbcType=VARCHAR}
+            </if>
+            <if test="driverVersion != null">
+                and ct.driverVersion = #{driverVersion,jdbcType=VARCHAR}
+            </if>
+            <if test="isUsed != null">
+                and ct.isUsed = #{isUsed,jdbcType=SMALLINT}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCollectionTaskByHistoryUpdate" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        ctid, csid, status, lastExecuteTime, totalDataSourceNum,
+        totalDataSourceSize, totalDataResultNum, totalDataResultSize
+        from collection_task
+        where ctid = #{ctid,jdbcType=VARCHAR}
+        and csid = #{csid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectAllDistinctTaskLabels" resultType="string">
+        select
+        distinct(label)
+        from collection_task
+        where
+        label is not null
+        <if test="isUsed != null">
+            and isUsed = #{isUsed,jdbcType=SMALLINT}
+        </if>
+    </select>
+
+    <select id="selectAllNotLabelTasks" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from collection_task ct
+        where ct.label is null
+        <if test="isUsed != null">
+            and ct.isUsed = #{isUsed,jdbcType=SMALLINT}
+        </if>
+    </select>
+
+    <update id="updateCollectionTaskSelective" parameterType="com.hc.entity.collection.task.CollectionTask">
+        update collection_task
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="lastExecuteTime != null">
+                lastExecuteTime = #{lastExecuteTime,jdbcType=BIGINT},
+            </if>
+            <if test="totalDataSourceNum != null">
+                totalDataSourceNum = #{totalDataSourceNum,jdbcType=INTEGER},
+            </if>
+            <if test="totalDataSourceSize != null">
+                totalDataSourceSize = #{totalDataSourceSize,jdbcType=BIGINT},
+            </if>
+            <if test="totalDataResultNum != null">
+                totalDataResultNum = #{totalDataResultNum,jdbcType=INTEGER},
+            </if>
+            <if test="totalDataResultSize != null">
+                totalDataResultSize = #{totalDataResultSize,jdbcType=BIGINT},
+            </if>
+            <if test="config != null">
+                config = #{config,jdbcType=VARCHAR},
+            </if>
+            <if test="label != null">
+                label = #{label,jdbcType=VARCHAR},
+            </if>
+            <if test="isUsed != null">
+                isUsed = #{isUsed,jdbcType=SMALLINT},
+            </if>
+            <if test="driverName != null">
+                driverName = #{driverName,jdbcType=SMALLINT},
+            </if>
+            <if test="driverVersion != null">
+                driverVersion = #{driverVersion,jdbcType=SMALLINT},
+            </if>
+            <if test="statusReason != null">
+                statusReason = #{statusReason,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where ctid = #{ctid,jdbcType=VARCHAR}
+        and csid = #{csid,jdbcType=VARCHAR}
+    </update>
+
+    <insert id="insertCollectionTaskSelective" parameterType="com.hc.entity.collection.task.CollectionTask">
+        insert into collection_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ctid != null">
+                ctid,
+            </if>
+            <if test="csid != null">
+                csid,
+            </if>
+            <if test="driverName != null">
+                driverName,
+            </if>
+            <if test="driverVersion != null">
+                driverVersion,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="lastExecuteTime != null">
+                lastExecuteTime,
+            </if>
+            <if test="totalDataSourceNum != null">
+                totalDataSourceNum,
+            </if>
+            <if test="totalDataSourceSize != null">
+                totalDataSourceSize,
+            </if>
+            <if test="totalDataResultNum != null">
+                totalDataResultNum,
+            </if>
+            <if test="totalDataResultSize != null">
+                totalDataResultSize,
+            </if>
+            <if test="label != null">
+                label,
+            </if>
+            <if test="config != null">
+                config,
+            </if>
+            <if test="isUsed != null">
+                isUsed,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ctid != null">
+                #{ctid,jdbcType=VARCHAR},
+            </if>
+            <if test="csid != null">
+                #{csid,jdbcType=VARCHAR},
+            </if>
+            <if test="driverName != null">
+                #{driverName,jdbcType=VARCHAR},
+            </if>
+            <if test="driverVersion != null">
+                #{driverVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="lastExecuteTime != null">
+                #{lastExecuteTime,jdbcType=BIGINT},
+            </if>
+            <if test="totalDataSourceNum != null">
+                #{totalDataSourceNum,jdbcType=INTEGER},
+            </if>
+            <if test="totalDataSourceSize != null">
+                #{totalDataSourceSize,jdbcType=BIGINT},
+            </if>
+            <if test="totalDataResultNum != null">
+                #{totalDataResultNum,jdbcType=INTEGER},
+            </if>
+            <if test="totalDataResultSize != null">
+                #{totalDataResultSize,jdbcType=BIGINT},
+            </if>
+            <if test="label != null">
+                #{label,jdbcType=VARCHAR},
+            </if>
+            <if test="config != null">
+                #{config,jdbcType=VARCHAR},
+            </if>
+            <if test="isUsed != null">
+                #{isUsed,jdbcType=SMALLINT},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertCollectionTaskBatch" parameterType="java.util.List">
+        insert into collection_task (ctid, name,
+        status, lastExecuteTime, config, csid,
+        driverName, driverVersion, dispatchConfig,
+        type)
+        values
+        <foreach collection="insertCts" item="item" index="index" separator=",">
+            (#{item.ctid,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR},
+            #{item.status,jdbcType=VARCHAR}, #{item.lastExecuteTime,jdbcType=BIGINT},
+            #{item.config,jdbcType=VARCHAR},
+            #{item.csid,jdbcType=VARCHAR}, #{item.driverName,jdbcType=VARCHAR},
+            #{item.driverVersion,jdbcType=VARCHAR}, #{item.dispatchConfig,jdbcType=VARCHAR},
+            #{item.type,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <delete id="deleteCollectionTaskBatch">
+        delete from collection_task
+        <where>
+            <if test="removeCts.size()==0">1=0</if>
+            <if test="removeCts.size() > 0">
+                <foreach collection="removeCts" item="item" open="(" separator="or" close=")">
+                    (ctid = #{item.ctid} and csid = #{item.csid})
+                </foreach>
+            </if>
+        </where>
+    </delete>
+
+    <update id="updateCollectionTaskBatch" parameterType="java.util.List">
+        <foreach collection="updateCts" item="item" index="index" separator=";">
+            update collection_task
+            <set>
+                <if test="item.name != null">
+                    name = #{item.name,jdbcType=VARCHAR},
+                </if>
+                <if test="item.status != null">
+                    status = #{item.status,jdbcType=VARCHAR},
+                </if>
+                <if test="item.lastExecuteTime != null">
+                    lastExecuteTime = #{item.lastExecuteTime,jdbcType=BIGINT},
+                </if>
+                <if test="item.totalDataSourceNum != null">
+                    totalDataSourceNum = #{item.totalDataSourceNum,jdbcType=INTEGER},
+                </if>
+                <if test="item.totalDataSourceSize != null">
+                    totalDataSourceSize = #{item.totalDataSourceSize,jdbcType=BIGINT},
+                </if>
+                <if test="item.totalDataResultNum != null">
+                    totalDataResultNum = #{item.totalDataResultNum,jdbcType=INTEGER},
+                </if>
+                <if test="item.totalDataResultSize != null">
+                    totalDataResultSize = #{item.totalDataResultSize,jdbcType=BIGINT},
+                </if>
+                <if test="item.config != null">
+                    config = #{item.config,jdbcType=VARCHAR},
+                </if>
+                <if test="item.driverName != null">
+                    driverName = #{item.driverName,jdbcType=VARCHAR},
+                </if>
+                <if test="item.driverVersion != null">
+                    driverVersion = #{item.driverVersion,jdbcType=VARCHAR},
+                </if>
+                <if test="item.isUsed != null">
+                    isUsed = #{item.isUsed,jdbcType=VARCHAR},
+                </if>
+                <if test="item.dispatchConfig != null">
+                    dispatchConfig = #{item.dispatchConfig,jdbcType=VARCHAR},
+                </if>
+                <if test="item.type != null">
+                    type = #{item.type,jdbcType=VARCHAR},
+                </if>
+            </set>
+            where ctid = #{item.ctid,jdbcType=VARCHAR}
+            and csid = #{item.csid,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+
+    <update id="updateCollectionTaskByHistory" parameterType="com.hc.entity.collection.history.CollectionHistory">
+        update collection_task
+        set
+        lastExecuteTime = #{time,jdbcType=BIGINT},
+        totalDataSourceNum = (totalDataSourceNum + #{dataSourceNum,jdbcType=INTEGER}),
+        totalDataSourceSize = (totalDataSourceSize + #{dataSourceSize,jdbcType=BIGINT}),
+        totalDataResultNum = (totalDataResultNum + #{dataResultNum,jdbcType=INTEGER}),
+        totalDataResultSize = (totalDataResultSize + #{dataResultSize,jdbcType=BIGINT})
+        where ctid = #{ctid,jdbcType=VARCHAR}
+        and csid = #{csid,jdbcType=VARCHAR}
+    </update>
+
 </mapper>

@@ -1,16 +1,16 @@
 package com.hc.entity.collection.task.status;
 
 public class CollectionTaskTimePointStatus extends CollectionTaskTimePointStatusKey {
-    private Long timecurrent;
+    private Long timeCurrent;
 
     private String status;
 
-    public Long getTimecurrent() {
-        return timecurrent;
+    public Long getTimeCurrent() {
+        return timeCurrent;
     }
 
-    public void setTimecurrent(Long timecurrent) {
-        this.timecurrent = timecurrent;
+    public void setTimeCurrent(Long timeCurrent) {
+        this.timeCurrent = timeCurrent;
     }
 
     public String getStatus() {

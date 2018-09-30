@@ -25,8 +25,7 @@ public class TaskCreateModifyFlagController implements BaseTaskModifyFalg{
 				writable.isWritabled = false;
 				writable.time = System.currentTimeMillis();
 				return true;
-			}else
-				if(writable.isOvertime()){
+			}else if(writable.isOvertime()){
 					writable.time = System.currentTimeMillis();
 					return true;
 				}

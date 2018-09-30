@@ -8,15 +8,15 @@ import com.hc.entity.collection.history.CollectionHistory;
 
 public interface CollectionTaskMapper {
 	List<String> selectAllDistinctTaskLabels(
-			@Param("isUsedCt")Integer isUsedCt);
+			@Param("isUsed")Integer isUsed);
 	
 	List<CollectionTask> selectAllNotLabelTasks(
-			@Param("isUsedCt")Integer isUsedCt);
+			@Param("isUsed")Integer isUsed);
 
 	List<CollectionTask> selectCollectionTasks(
 			@Param("csid")String csid, @Param("label")String label,
-			@Param("caName")String caName, @Param("caVersion")String caVersion,
-			@Param("isUsedCt")Integer isUsedCt);
+			@Param("driverName")String driverName, @Param("driverVersion")String driverVersion,
+			@Param("isUsed")Integer isUsed);
 	
 	CollectionTask selectCollectionTaskByHistoryUpdate(
 			@Param("ctid")String ctid, @Param("csid")String csid);

@@ -165,8 +165,8 @@ public class CollectionMonitorDao {
 	}
 	
 	public List<CollectionTask> findCollectionTasks(
-			String csid, String label, String caName, String caVersion, Integer isUsedCt) {
-		return collectionTaskMapper.selectCollectionTasks(csid, label, caName, caVersion, isUsedCt);
+			String csid, String label, String driverName, String driverVersion, Integer isUsed) {
+		return collectionTaskMapper.selectCollectionTasks(csid, label, driverName, driverVersion, isUsed);
 	}
 	
 	public int addCollectionTaskSelective(CollectionTask ct){
@@ -189,12 +189,12 @@ public class CollectionMonitorDao {
 		return collectionTaskMapper.selectCollectionTaskByHistoryUpdate(ctid, csid);
 	}
 	
-	public List<String> findAllDistinctTaskLabels(Integer isUsedCt) {
-		return collectionTaskMapper.selectAllDistinctTaskLabels(isUsedCt);
+	public List<String> findAllDistinctTaskLabels(Integer isUsed) {
+		return collectionTaskMapper.selectAllDistinctTaskLabels(isUsed);
 	}
 	
-	public List<CollectionTask> findAllNotLabelTasks(Integer isUsedCt) {
-		return collectionTaskMapper.selectAllNotLabelTasks(isUsedCt);
+	public List<CollectionTask> findAllNotLabelTasks(Integer isUsed) {
+		return collectionTaskMapper.selectAllNotLabelTasks(isUsed);
 	}
 	
 	public int addCollectionTaskUpdateRecordSelective(CollectionTaskUpdateRecord record){
@@ -264,8 +264,7 @@ public class CollectionMonitorDao {
 		return collectionHistoryMapper.selectTaskHistoryResultNumAndSizeByHistoryTime(type, milli, label);
 	}
 	
-	public Page<CollectionHistory> findCollectionHistorysPage(
-			String ctid, String csid, int currentPage, int pageSize) {
+	public Page<CollectionHistory> findCollectionHistorysPage(String ctid, String csid, int currentPage, int pageSize) {
 		PageHelper.startPage(currentPage, pageSize);
 		return (Page<CollectionHistory>) collectionHistoryMapper.selectCollectionHistorys(ctid, csid, null);
 	}
@@ -338,8 +337,8 @@ public class CollectionMonitorDao {
 		return collectionTaskTimePointStatusMapper.insert(taskStatus);
 	}
 
-	public int upsertCollectionTaskTimePointStatus(CollectionTaskTimePointStatus taskStatus) {
-		return collectionTaskTimePointStatusMapper.upsert(taskStatus);
+	public int updateCollectionTaskTimePointStatus(CollectionTaskTimePointStatus taskStatus) {
+		return collectionTaskTimePointStatusMapper.update(taskStatus);
 	}
 
 }

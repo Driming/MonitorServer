@@ -40,10 +40,10 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer{
 		super.configureWebSocketTransport(registration);
 	}
 	  
-    @Override  
+    @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {  
         registration.setInterceptors(presenceChannelInterceptor());  
-    }  
+    }
    
     @Override  
     public void configureClientOutboundChannel(ChannelRegistration registration) {  

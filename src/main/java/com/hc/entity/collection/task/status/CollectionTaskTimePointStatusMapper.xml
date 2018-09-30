@@ -19,7 +19,7 @@
       #{timecurrent,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR})
   </insert>
   
-  <insert id="upsert" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatus" >
+  <insert id="update" parameterType="com.hc.entity.collection.task.status.CollectionTaskTimePointStatus" >
     insert into collection_task_time_point_status (ctid, timeSave, timeDelay, 
       timeCurrent, status)
     values (#{ctid,jdbcType=VARCHAR}, #{timesave,jdbcType=BIGINT}, #{timedelay,jdbcType=BIGINT}, 

@@ -5,191 +5,161 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.hc.entity.collection.application.CollectionApplication;
 import com.hc.entity.collection.server.CollectionServer;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 @JsonInclude(Include.NON_NULL)
 public class CollectionTask {
-	private String ctid;
-	private String csid;
-	private String name;
-	private String status;
-	private String statusReason;
-	private Long lastExecuteTime;
+    private String ctid;
+    private String csid;
+    private String name;
+    private String config;
+    private String driverName;
+    private String driverVersion;
+    private String type;
+    private String dispatchConfig;
+    private String status;
+    private String statusReason;
+    private long lastExecuteTime;
+    private long totalDataSourceNum;
+    private long totalDataResultNum;
+    private double totalDataResultSize;
+    private double totalDataSourceSize;
+    private String label;
+    private short isUsed;
 
-	private Integer totalDataSourceNum;
-	private Long totalDataSourceSize;
-	private Integer totalDataResultNum;
-	private Long totalDataResultSize;
+    public String getLabel() {
+        return label;
+    }
 
-	private String type;
-	private Short utc;
-	private String config;
-	private String collectConfig;
-	private String label;
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	private String caName;
-	private String caVersion;
-	private Short isUsed;
+    public short getIsUsed() {
+        return isUsed;
+    }
 
-	private CollectionServer cs;
-	private CollectionApplication ca;
+    public void setIsUsed(short isUsed) {
+        this.isUsed = isUsed;
+    }
 
-	public String getCtid() {
-		return ctid;
-	}
+    public String getCtid() {
+        return ctid;
+    }
 
-	public void setCtid(String ctid) {
-		this.ctid = ctid;
-	}
+    public void setCtid(String ctid) {
+        this.ctid = ctid;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getCsid() {
+        return csid;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setCsid(String csid) {
+        this.csid = csid;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getStatusReason() {
-		return statusReason;
-	}
+    public String getConfig() {
+        return config;
+    }
 
-	public void setStatusReason(String statusReason) {
-		this.statusReason = statusReason;
-	}
+    public void setConfig(String config) {
+        this.config = config;
+    }
 
-	public Long getLastExecuteTime() {
-		return lastExecuteTime;
-	}
+    public String getDriverName() {
+        return driverName;
+    }
 
-	public void setLastExecuteTime(Long lastExecuteTime) {
-		this.lastExecuteTime = lastExecuteTime;
-	}
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
+    }
 
-	public Integer getTotalDataSourceNum() {
-		return totalDataSourceNum;
-	}
+    public String getDriverVersion() {
+        return driverVersion;
+    }
 
-	public void setTotalDataSourceNum(Integer totalDataSourceNum) {
-		this.totalDataSourceNum = totalDataSourceNum;
-	}
+    public void setDriverVersion(String driverVersion) {
+        this.driverVersion = driverVersion;
+    }
 
-	public Long getTotalDataResultSize() {
-		return totalDataResultSize;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setTotalDataResultSize(Long totalDataResultSize) {
-		this.totalDataResultSize = totalDataResultSize;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public Integer getTotalDataResultNum() {
-		return totalDataResultNum;
-	}
+    public String getDispatchConfig() {
+        return dispatchConfig;
+    }
 
-	public void setTotalDataResultNum(Integer totalDataResultNum) {
-		this.totalDataResultNum = totalDataResultNum;
-	}
+    public void setDispatchConfig(String dispatchConfig) {
+        this.dispatchConfig = dispatchConfig;
+    }
 
-	public Long getTotalDataSourceSize() {
-		return totalDataSourceSize;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setTotalDataSourceSize(Long totalDataSourceSize) {
-		this.totalDataSourceSize = totalDataSourceSize;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public String getConfig() {
-		return config;
-	}
+    public String getStatusReason() {
+        return statusReason;
+    }
 
-	public void setConfig(String config) {
-		this.config = config;
-	}
+    public void setStatusReason(String statusReason) {
+        this.statusReason = statusReason;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public long getLastExecuteTime() {
+        return lastExecuteTime;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public void setLastExecuteTime(long lastExecuteTime) {
+        this.lastExecuteTime = lastExecuteTime;
+    }
 
-	public String getCsid() {
-		return csid;
-	}
+    public long getTotalDataSourceNum() {
+        return totalDataSourceNum;
+    }
 
-	public void setCsid(String csid) {
-		this.csid = csid;
-	}
+    public void setTotalDataSourceNum(long totalDataSourceNum) {
+        this.totalDataSourceNum = totalDataSourceNum;
+    }
 
-	public String getCaName() {
-		return caName;
-	}
+    public double getTotalDataResultSize() {
+        return totalDataResultSize;
+    }
 
-	public void setCaName(String caName) {
-		this.caName = caName;
-	}
+    public void setTotalDataResultSize(double totalDataResultSize) {
+        this.totalDataResultSize = totalDataResultSize;
+    }
 
-	public String getCaVersion() {
-		return caVersion;
-	}
+    public long getTotalDataResultNum() {
+        return totalDataResultNum;
+    }
 
-	public void setCaVersion(String caVersion) {
-		this.caVersion = caVersion;
-	}
+    public void setTotalDataResultNum(long totalDataResultNum) {
+        this.totalDataResultNum = totalDataResultNum;
+    }
 
-	public Short getIsUsed() {
-		return isUsed;
-	}
+    public double getTotalDataSourceSize() {
+        return totalDataSourceSize;
+    }
 
-	public void setIsUsed(Short isUsed) {
-		this.isUsed = isUsed;
-	}
-
-	public CollectionServer getCs() {
-		return cs;
-	}
-
-	public void setCs(CollectionServer cs) {
-		this.cs = cs;
-	}
-
-	public CollectionApplication getCa() {
-		return ca;
-	}
-
-	public void setCa(CollectionApplication ca) {
-		this.ca = ca;
-	}
-
-	public String getCollectConfig() {
-		return collectConfig;
-	}
-
-	public void setCollectConfig(String collectConfig) {
-		this.collectConfig = collectConfig;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public Short getUtc() {
-		return utc;
-	}
-
-	public void setUtc(Short utc) {
-		this.utc = utc;
-	}
-
+    public void setTotalDataSourceSize(double totalDataSourceSize) {
+        this.totalDataSourceSize = totalDataSourceSize;
+    }
 }

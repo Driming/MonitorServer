@@ -3,9 +3,9 @@ package com.hc.entity.collection.task.status;
 public class CollectionTaskTimePointStatusKey {
     private String ctid;
 
-    private Long timesave;
+    private Long timeSave;
 
-    private Long timedelay;
+    private Long timeDelay;
 
     public String getCtid() {
         return ctid;
@@ -15,19 +15,11 @@ public class CollectionTaskTimePointStatusKey {
         this.ctid = ctid == null ? null : ctid.trim();
     }
 
-    public Long getTimesave() {
-        return timesave;
-    }
+    public Long getTimeSave() { return timeSave; }
 
-    public void setTimesave(Long timesave) {
-        this.timesave = timesave;
-    }
+    public void setTimeSave(Long timeSave) { this.timeSave = timeSave; }
 
-    public Long getTimedelay() {
-        return timedelay;
-    }
+    public Long getTimeDelay() { return timeDelay; }
 
-    public void setTimedelay(Long timedelay) {
-        this.timedelay = timedelay;
-    }
+    public void setTimeDelay(Long timeDelay) { this.timeDelay = timeDelay; }
 }

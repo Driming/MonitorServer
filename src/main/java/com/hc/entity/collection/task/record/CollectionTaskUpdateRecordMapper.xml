@@ -6,8 +6,8 @@
     <id column="time" property="time" jdbcType="BIGINT" />
     <result column="type" property="type" jdbcType="SMALLINT" />
     <result column="user" property="user" jdbcType="VARCHAR" />
-    <result column="requestMessage" property="requestmessage" jdbcType="VARCHAR" />
-    <result column="responseMessage" property="responsemessage" jdbcType="VARCHAR" />
+    <result column="requestMessage" property="requestMessage" jdbcType="VARCHAR" />
+    <result column="responseMessage" property="responseMessage" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, time, type, requestMessage, responseMessage, user
@@ -47,10 +47,10 @@
       <if test="user != null" >
         user,
       </if>
-      <if test="requestmessage != null" >
+      <if test="requestMessage != null" >
         requestMessage,
       </if>
-      <if test="responsemessage != null" >
+      <if test="responseMessage != null" >
         responseMessage,
       </if>
     </trim>
@@ -67,11 +67,11 @@
       <if test="user != null" >
         #{user,jdbcType=SMALLINT},
       </if>
-      <if test="requestmessage != null" >
-        #{requestmessage,jdbcType=VARCHAR},
+      <if test="requestMessage != null" >
+        #{requestMessage,jdbcType=VARCHAR},
       </if>
-      <if test="responsemessage != null" >
-        #{responsemessage,jdbcType=VARCHAR},
+      <if test="responseMessage != null" >
+        #{responseMessage,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -88,11 +88,11 @@
       <if test="user != null" >
         user = #{user,jdbcType=SMALLINT},
       </if>
-      <if test="requestmessage != null" >
-        requestMessage = #{requestmessage,jdbcType=VARCHAR},
+      <if test="requestMessage != null" >
+        requestMessage = #{requestMessage,jdbcType=VARCHAR},
       </if>
-      <if test="responsemessage != null" >
-        responseMessage = #{responsemessage,jdbcType=VARCHAR},
+      <if test="responseMessage != null" >
+        responseMessage = #{responseMessage,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}

@@ -171,12 +171,11 @@ public class CollectionMonitorService {
 				ct.setCtid(ctid);
 				ct.setCsid(csid);
 				ct.setName(task.getName());
-				ct.setCaName(task.getDriverName());
-				ct.setCaVersion(task.getDriverVersion());
+				ct.setDriverName(task.getDriverName());
+				ct.setDriverVersion(task.getDriverVersion());
 				ct.setType(task.getType());
-				ct.setUtc((short)(task.getUtc() ? 1 : 0));
-				ct.setConfig(task.getDispatchConfig());
-				ct.setCollectConfig(task.getConfig());
+				ct.setConfig(task.getConfig());
+				ct.setDispatchConfig(task.getDispatchConfig());
 			}
 			if (existCts.isEmpty())
 				insertCts.add(ct);
@@ -216,33 +215,36 @@ public class CollectionMonitorService {
 	
 	//更改应用信息
 	public Object updateCollectionApplication(CollectionApplication ca) {
-		if(ca.getEgName() == null || ca.getVersion() == null)
+		if(ca.getEgName() == null || ca.getVersion() == null){
 			return MessageUtils.parameterNullError();
-		
+		}
 		int result = collectionMonitorDao.updateCollectionApplication(ca);
-		if(result <= 0)
+		if(result <= 0){
 			return MessageUtils.operationFailedError();
-		return MessageUtils.operationSuccess();
+		}else{
+			return MessageUtils.operationSuccess();
+		}
 	}
 
 	
 	//创建任务
 	public Object addCollectionTask(CollectionTask ct, User user) {
 		if(ct.getCsid() == null 
-				|| ct.getCaName() == null
-				|| ct.getCaVersion() == null
-				|| ct.getConfig() == null)
-			return MessageUtils.parameterNullError();
-		
+				|| ct.getDriverName() == null
+				|| ct.getDriverVersion() == null
+				|| ct.getConfig() == null){
+			return MessageUtils.parameterNullError();	//判断是否有传入信息，否则返回参数为空错误
+		}
+
 		//权限控制
-		if(user == null)
+		if(user == null || !AccessController.createTask(ct.getCsid(), user.getUid()))
 			return MessageUtils.permissionDeniedError();
-		boolean isAccess = AccessController.createTask(ct.getCsid(), user.getUid());
+		/*boolean isAccess = AccessController.createTask(ct.getCsid(), user.getUid());
 		if(!isAccess)
-			return MessageUtils.permissionDeniedError();
-		
+			return MessageUtils.permissionDeniedError();*/
+
 		//判断是否拥有写权限
-		Integer eid = null;
+		Integer eid;
 		boolean isWritabled = TaskModifyFlagControllerBuilder.buildTaskCreateController()
 				.isWritabled(ct.getCsid());
 		if(isWritabled){
@@ -254,11 +256,12 @@ public class CollectionMonitorService {
 					JSONObject.fromObject(user, StringUtils.jsonIgnoreNull()).toString(),
 					JSONObject.fromObject(ct, StringUtils.jsonIgnoreNull()).toString());
 			collectionMonitorDao.addCollectionTaskUpdateRecordSelective(record);
-			// webSocket发送任务状态给监控客户端 
+			// webSocket发送任务状态给监控客户端
 			ct.setCtid("0");
 			webSocketSendService.updateTaskConfigure(eid, ct);
-		}else
+		}else{
 			return MessageUtils.otherUserWorkingThisTaskError();
+		}
 		return MessageUtils.returnSuccess(MessageUtils.writeMessage("id", eid));
 	}
 
@@ -400,18 +403,18 @@ public class CollectionMonitorService {
 		if(record == null)
 			return MessageUtils.parameterNotStandardVauleError();
 		
-		if(record.getResponsemessage() == null)
+		if(record.getResponseMessage() == null)
 			return MessageUtils.returnSuccess(null);
 		
 		TaskUpdateReplyVo replyVo = new TaskUpdateReplyVo();
 		replyVo.setId(record.getId());
 		replyVo.setType(record.getType());
-		JSONObject requestJson = JSONObject.fromObject(record.getRequestmessage());
+		JSONObject requestJson = JSONObject.fromObject(record.getRequestMessage());
 		if(requestJson.containsKey("ctid"))
 			replyVo.setCtid(requestJson.getString("ctid"));
 		if(requestJson.containsKey("csid"))
 			replyVo.setCsid(requestJson.getString("csid"));
-		JSONObject responseJson = JSONObject.fromObject(record.getResponsemessage());
+		JSONObject responseJson = JSONObject.fromObject(record.getResponseMessage());
 		if(responseJson.containsKey("ctid"))
 			replyVo.setCtid(responseJson.getString("ctid"));
 		if(responseJson.containsKey("code"))

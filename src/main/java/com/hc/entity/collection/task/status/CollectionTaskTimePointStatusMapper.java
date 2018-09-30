@@ -6,7 +6,7 @@ import com.hc.entity.collection.task.status.CollectionTaskTimePointStatusKey;
 public interface CollectionTaskTimePointStatusMapper {
 	int insert(CollectionTaskTimePointStatus record);
 	
-	int upsert(CollectionTaskTimePointStatus taskStatus);
+	int update(CollectionTaskTimePointStatus taskStatus);
 	
 	
     int deleteByPrimaryKey(CollectionTaskTimePointStatusKey key);

@@ -9,24 +9,24 @@ public class CollectionTaskUpdateRecord {
 
 	private String user;
 
-	private String requestmessage;
+	private String requestMessage;
 
-	private String responsemessage;
+	private String responseMessage;
 
 	public CollectionTaskUpdateRecord() {
 	}
 
-	public CollectionTaskUpdateRecord(Integer id, String responsemessage) {
+	public CollectionTaskUpdateRecord(Integer id, String responseMessage) {
 		this.id = id;
-		this.responsemessage = responsemessage;
+		this.responseMessage = responseMessage;
 	}
 
-	public CollectionTaskUpdateRecord(Integer id, Integer type, String user, String requestmessage) {
+	public CollectionTaskUpdateRecord(Integer id, Integer type, String user, String requestMessage) {
 		this.id = id;
-		this.time = System.currentTimeMillis();
+		this.time = System.currentTimeMillis();	//加入生成系统当前时间参数
 		this.type = type.shortValue();
 		this.user = user;
-		this.requestmessage = requestmessage;
+		this.requestMessage = requestMessage;
 	}
 
 	public Integer getId() {
@@ -37,43 +37,23 @@ public class CollectionTaskUpdateRecord {
 		this.id = id;
 	}
 
-	public Long getTime() {
-		return time;
-	}
+	public Long getTime() { return time; }
 
-	public void setTime(Long time) {
-		this.time = time;
-	}
+	public void setTime(Long time) { this.time = time; }
 
-	public Short getType() {
-		return type;
-	}
+	public Short getType() { return type; }
 
-	public void setType(Short type) {
-		this.type = type;
-	}
+	public void setType(Short type) { this.type = type; }
 
-	public String getUser() {
-		return user;
-	}
+	public String getUser() { return user; }
 
-	public void setUser(String user) {
-		this.user = user;
-	}
+	public void setUser(String user) { this.user = user; }
 
-	public String getRequestmessage() {
-		return requestmessage;
-	}
+	public String getRequestMessage() { return requestMessage; }
 
-	public void setRequestmessage(String requestmessage) {
-		this.requestmessage = requestmessage == null ? null : requestmessage.trim();
-	}
+	public void setRequestMessage(String requestMessage) { this.requestMessage = requestMessage; }
 
-	public String getResponsemessage() {
-		return responsemessage;
-	}
+	public String getResponseMessage() { return responseMessage; }
 
-	public void setResponsemessage(String responsemessage) {
-		this.responsemessage = responsemessage == null ? null : responsemessage.trim();
-	}
+	public void setResponseMessage(String responseMessage) { this.responseMessage = responseMessage; }
 }

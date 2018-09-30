@@ -152,9 +152,9 @@ public class CollectionMonitorController {
 	//根据标签或者应用获取任务信息
 	@ResponseBody
 	@RequestMapping("/application/label/tasks")
-	public Object getCollectionTasks(String label, String caName, String caVersion){
+	public Object getCollectionTasks(String label, String driverName, String driverVersion){
 		int isUsedCt = 1;
-		return MessageUtils.returnSuccess(collectionMonitorDao.findCollectionTasks(null, label, caName, caVersion, isUsedCt));
+		return MessageUtils.returnSuccess(collectionMonitorDao.findCollectionTasks(null, label, driverName, driverVersion, isUsedCt));
 	}
 	
 	//控制任务状态
@@ -192,16 +192,16 @@ public class CollectionMonitorController {
 	@ResponseBody
 	@RequestMapping("/application/task/labels")
 	public Object getAllDistinctTaskLabels(){
-		int isUsedCt = 1;
-		return MessageUtils.returnSuccess(collectionMonitorDao.findAllDistinctTaskLabels(isUsedCt));
+		int isUsed = 1;
+		return MessageUtils.returnSuccess(collectionMonitorDao.findAllDistinctTaskLabels(isUsed));
 	}
 	
 	//获取所有未设标签值的任务
 	@ResponseBody
 	@RequestMapping("/application/notLabel/tasks")
 	public Object getAllNotLabelTasks(){
-		int isUsedCt = 1;
-		return MessageUtils.returnSuccess(collectionMonitorDao.findAllNotLabelTasks(isUsedCt));
+		int isUsed = 1;
+		return MessageUtils.returnSuccess(collectionMonitorDao.findAllNotLabelTasks(isUsed));
 	}
 	
 	//获取所有任务进度信息

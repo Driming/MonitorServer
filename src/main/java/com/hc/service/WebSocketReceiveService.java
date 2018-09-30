@@ -222,7 +222,7 @@ public class WebSocketReceiveService {
 			return;
 		}
 
-		Integer result = null;
+		Integer result;
 		int loop = 3;
 		do {
 			if (feedbackVo.getCode() != 0)

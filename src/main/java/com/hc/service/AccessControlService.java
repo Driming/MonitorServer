@@ -219,7 +219,7 @@ public class AccessControlService {
 		//验证验证码
 		boolean isCaptchaTure = MessageVerifier.validateCaptcha(user);
 		if(!isCaptchaTure)
-			return MessageUtils.capatchaCodeFailureError();
+			return MessageUtils.captchaCodeFailureError();
 		
 		//验证短信
 		boolean isPhoneVerificationTrue = MessageVerifier.validatePhone(user);
@@ -255,7 +255,7 @@ public class AccessControlService {
 		//验证验证码
 		boolean isCapatchaTure = MessageVerifier.validateCaptcha(user);
 		if(!isCapatchaTure)
-			return MessageUtils.capatchaCodeFailureError();
+			return MessageUtils.captchaCodeFailureError();
 		
 		//验证短信
 		boolean isPhoneVerificationTrue = MessageVerifier.validatePhone(user);

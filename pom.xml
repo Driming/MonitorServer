@@ -194,8 +194,14 @@
 			<artifactId>grpc-stub</artifactId>
 			<version>1.9.0</version>
 		</dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
 	<build>
 		<finalName>bigdata</finalName>

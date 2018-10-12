@@ -17,7 +17,7 @@ public interface CollectionServerMapper {
 	
 	int updateCollectionServerSelective(CollectionServer cs);
 	
-	int upsert(CollectionServer cs);
+	int update(CollectionServer cs);
 	
 	int insertBatch(@Param("servers")List<CollectionServer> servers);
 

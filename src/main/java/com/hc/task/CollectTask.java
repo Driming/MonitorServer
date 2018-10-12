@@ -30,13 +30,13 @@ public class CollectTask {
     //@Scheduled(cron = "*/5 * * * * ? ")
 	public void test(){
 		CollectionTask ct = new CollectionTask();
-		ct.setConfig("'{'driver':{'driver':'wave_weather','name':'WaveWeatherDriver','version':'1.0'},'reader':{'path':'http://172.22.1.175/di/http.action?userId=gmcrzh&pwd=zhuh123&interfaceId=getRACOcenfs&dataFormat=json&ymdhms={date:yyyyMMddHHmmss}'},'storage':{'database_prefix':'wave_weather','port':'8920','host':'10.148.83.5'},'task':{'delay':'2h','retry_times':'10','min_save_count':'1','work_threads':'1','name':'wave_weather','hours':'3','interval':'24h','min_read_count':'1','retry_interval':'10m'}}'");
 		ct.setCtid("1433");
 		ct.setCsid("test1");
+		ct.setConfig("'{'driver':{'driver':'wave_weather','name':'WaveWeatherDriver','version':'1.0'},'reader':{'path':'http://172.22.1.175/di/http.action?userId=gmcrzh&pwd=zhuh123&interfaceId=getRACOcenfs&dataFormat=json&ymdhms={date:yyyyMMddHHmmss}'},'storage':{'database_prefix':'wave_weather','port':'8920','host':'10.148.83.5'},'task':{'delay':'2h','retry_times':'10','min_save_count':'1','work_threads':'1','name':'wave_weather','hours':'3','interval':'24h','min_read_count':'1','retry_interval':'10m'}}'");
 		User user = new User();
 		user.setUsername("admin");
 		user.setPassword("admin");
-		webSocketSendService.updateTaskConfigure(2342344, ct);
+		webSocketSendService.setTaskConfigure(ct);
 		//collectionMonitorService.updateTaskConfigure(ct, user);
 	}
     

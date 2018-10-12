@@ -67,18 +67,15 @@ public class CollectionStorageController {
 	
 	@ResponseBody
 	@RequestMapping("/data/index/detail/info")
-	public Object getStorageDataIndexDetailInfos(String id,
-				String collectName, String field,
-				Short fieldType, int currentPage,
-				int pageSize){
+	public Object getStorageDataIndexDetailInfos(String id,String collectName, String field,
+				Short fieldType, int currentPage,int pageSize){
 		return collectionStorageService.findStorageDataIndexDetailInfos(
 				id, collectName, field, fieldType, currentPage, pageSize);
 	}
 	
 	@ResponseBody
 	@RequestMapping("/data/index/detail/info/byContainField")
-	public Object getStorageDataIndexDetailInfosByContainField(String id,
-			String collectName, String field,
+	public Object getStorageDataIndexDetailInfosByContainField(String id,String collectName, String field,
 			int currentPage, int pageSize){
 		return collectionStorageService.findStorageDataIndexDetailInfosByContainField(
 				id, collectName, field, currentPage, pageSize);

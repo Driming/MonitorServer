@@ -78,7 +78,7 @@ public class DriverManagerService {
 
 		String path = driverManagerDao.getTempRoot();
 		if (fileNames.size() != 1)
-			return MessageUtils.parameterNotStandardVauleError();
+			return MessageUtils.parameterNotStandardValueError();
 
 		String milliDir = String.valueOf(System.currentTimeMillis());
 		path = StringUtils.join(path, milliDir);

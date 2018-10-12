@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)  
 @ContextConfiguration(locations={"classpath:spring-mybatis.xml"})  
 public class RenderTest {
-	/*
 	@Test
 	public void testSate(){
 		System.out.println(System.currentTimeMillis());
@@ -25,9 +24,9 @@ public class RenderTest {
 			e.printStackTrace();
 		}
 		System.out.println(format.format(date));
-	}*/
+	}
 	
-	
+	//WebSocketSendService
 	
 	@Test
 	public void testRegisterCore() throws IOException{

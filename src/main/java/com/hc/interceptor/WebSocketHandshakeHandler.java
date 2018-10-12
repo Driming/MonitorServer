@@ -16,44 +16,46 @@ import com.hc.util.map.ServerMap;
 
 /**
  * WebSocket 握手信息
+ *
  * @ClassName: WebSocketHandshakeHandler.java
  * @Description: WebSocket 握手信息
  */
-public class WebSocketHandshakeHandler extends TextWebSocketHandler {  
+public class WebSocketHandshakeHandler extends TextWebSocketHandler{
 
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        super.afterConnectionClosed(session, status);
-    }
+	@Override
+	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception{
+		super.afterConnectionClosed(session, status);
+	}
 
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+	@Override
+	public void afterConnectionEstablished(WebSocketSession session) throws Exception{
 		String name = session.getPrincipal().getName();
-		
+
 		int isUsedCs = 1;
-		long starttime = 0;
+		long startTime = 0;
 		short type = ServerMap.COLLECT_SERVER;
 		CollectionMonitorDao collectionMonitorDao = (CollectionMonitorDao) ContextCore.getBean(CollectionMonitorDao.class);
 		WebSocketSendService webSocketSendService = (WebSocketSendService) ContextCore.getBean(WebSocketSendService.class);
 		Map<String, Object> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
 		List<CollectionServer> collectionServers = collectionMonitorDao.findCollectionServers(isUsedCs, type);
-		for (CollectionServer collectionServer : collectionServers) {
+		for(CollectionServer collectionServer : collectionServers){
 			String csid = collectionServer.getCsid();
 			Object time = serverMaxTimes.get(csid);
-			if(!csid.equals(name))
+			if(! csid.equals(name)){
 				continue;
-			if (time == null)
-				webSocketSendService.synchronizeTaskHistory(csid, starttime);
-			else{
+			}
+			if(time == null){
+				webSocketSendService.synchronizeTaskHistory(csid, startTime);
+			}else{
 				webSocketSendService.synchronizeTaskHistory(csid, Long.parseLong(time.toString()));
 			}
 
 		}
-        super.afterConnectionEstablished(session);
-    }
+		super.afterConnectionEstablished(session);
+	}
 
-    @Override
-    public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        super.handleMessage(session, message);
-    }
+	@Override
+	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception{
+		super.handleMessage(session, message);
+	}
 }  

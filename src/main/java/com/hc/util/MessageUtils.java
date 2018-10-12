@@ -54,7 +54,7 @@ public class MessageUtils {
 		return returnState(-2, "Parameter can not be null", null);
 	}
 
-	public static Map<String, Object> parameterNotStandardVauleError() {
+	public static Map<String, Object> parameterNotStandardValueError() {
 		return returnState(-3, "Some parameters need to pass the specified value", null);
 	}
 
@@ -106,7 +106,7 @@ public class MessageUtils {
 		return returnState(-15, "Verification code failure", null);
 	}
 	
-	public static Map<String, Object> capatchaCodeFailureError() {
+	public static Map<String, Object> captchaCodeFailureError() {
 		return returnState(-16, "Capatcha failure", null);
 	}
 	

@@ -96,8 +96,8 @@ public class CollectionMonitorDao {
 		return collectionServerMapper.deleteBatch(servers);
 	}
 	
-	public int upsertCollectionServer(CollectionServer cs) {
-		return collectionServerMapper.upsert(cs);
+	public int updateCollectionServer(CollectionServer cs) {
+		return collectionServerMapper.update(cs);
 	}
 	
 	//应用
@@ -306,8 +306,7 @@ public class CollectionMonitorDao {
 		return collectionHistoryMapper.selectDayInfo(ctid, csid, time);
 	}
 
-	public List<CollectionHistory> findTaskHistoryByDay(
-			String ctid, String csid, int year, int month, int day) {
+	public List<CollectionHistory> findTaskHistoryByDay(String ctid, String csid, int year, int month, int day) {
 		return collectionHistoryMapper.selectByDay(ctid, csid, year, month, day);
 	}
 	

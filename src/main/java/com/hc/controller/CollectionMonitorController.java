@@ -42,8 +42,7 @@ public class CollectionMonitorController {
 	public void initCommTask(){
 		collectionMonitorService.setCommTask(commTask);
 	}
-	
-	
+
 	/************  服务器    *************/
 	//获取所有采集服务信息
 	@ResponseBody
@@ -137,6 +136,7 @@ public class CollectionMonitorController {
 	}
 	
 	/************ 系统 ***************/
+	//控制采集端系统任务整体状态
 	@ResponseBody
 	@RequestMapping("/system/control")
 	public Object controlCollectDispatchSystem(

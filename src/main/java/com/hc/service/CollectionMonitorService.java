@@ -398,7 +398,6 @@ public class CollectionMonitorService{
 			collectionMonitorDao.addCollectionTaskUpdateRecordSelective(record);
 			// webSocket发送任务配置修改给采集监控客户端
 			webSocketSendService.setTaskConfigure(ct);
-
 		}else{
 			return MessageUtils.otherUserWorkingThisTaskError();
 		}

@@ -172,15 +172,15 @@ public class MonitorTask {
 	@Scheduled(cron = "*/5 * * * * ? ")
 	public void synchronizeTaskHistory() {
 		int isUsedCs = 1;
-		long starttime = 0;
+		long startTime = 0;
 		short type = ServerMap.COLLECT_SERVER;
-		Map<String, Object> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
+		Map<String, Long> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
 		List<CollectionServer> collectionServers = collectionMonitorDao.findCollectionServers(isUsedCs, type);
 		for (CollectionServer collectionServer : collectionServers) {
 			String csid = collectionServer.getCsid();
 			Object time = serverMaxTimes.get(csid);
 			if (time == null)
-				webSocketSendService.synchronizeTaskHistory(csid, starttime);
+				webSocketSendService.synchronizeTaskHistory(csid, startTime);
 			else
 				webSocketSendService.synchronizeTaskHistory(csid, Long.parseLong(time.toString()));
 

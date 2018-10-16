@@ -1,26 +1,26 @@
 package com.hc.vo;
 
-public class RecordVo {
+public class RecordVo{
 	private Long createdTime;
 	private String record;
 
-	public Long getCreatedTime() {
+	public Long getCreatedTime(){
 		return createdTime;
 	}
 
-	public void setCreatedTime(Long createdTime) {
+	public void setCreatedTime(Long createdTime){
 		this.createdTime = createdTime;
 	}
 
-	public String getRecord() {
+	public String getRecord(){
 		return record;
 	}
 
-	public void setRecord(String record) {
+	public void setRecord(String record){
 		this.record = record;
 	}
 
-	public static class Record {
+	public static class Record{
 		private String id;
 		private String result;
 		private byte[] exception;
@@ -36,99 +36,99 @@ public class RecordVo {
 		private Long timeDelay;
 		private Integer retryCount;
 
-		public String getId() {
+		public String getId(){
 			return id;
 		}
 
-		public void setId(String id) {
+		public void setId(String id){
 			this.id = id;
 		}
 
-		public String getResult() {
+		public String getResult(){
 			return result;
 		}
 
-		public void setResult(String result) {
+		public void setResult(String result){
 			this.result = result;
 		}
 
-		public byte[] getException() {
+		public byte[] getException(){
 			return exception;
 		}
 
-		public void setException(byte[] exception) {
+		public void setException(byte[] exception){
 			this.exception = exception;
 		}
 
-		public Integer getSourceSum() {
+		public Integer getSourceSum(){
 			return sourceSum;
 		}
 
-		public void setSourceSum(Integer sourceSum) {
+		public void setSourceSum(Integer sourceSum){
 			this.sourceSum = sourceSum;
 		}
 
-		public Long getSourceSize() {
+		public Long getSourceSize(){
 			return sourceSize;
 		}
 
-		public void setSourceSize(Long sourceSize) {
+		public void setSourceSize(Long sourceSize){
 			this.sourceSize = sourceSize;
 		}
 
-		public Long getOutcomeSize() {
+		public Long getOutcomeSize(){
 			return outcomeSize;
 		}
 
-		public void setOutcomeSize(Long outcomeSize) {
+		public void setOutcomeSize(Long outcomeSize){
 			this.outcomeSize = outcomeSize;
 		}
 
-		public Integer getOutcomeSum() {
+		public Integer getOutcomeSum(){
 			return outcomeSum;
 		}
 
-		public void setOutcomeSum(Integer outcomeSum) {
+		public void setOutcomeSum(Integer outcomeSum){
 			this.outcomeSum = outcomeSum;
 		}
 
-		public Long getTimeStart() {
+		public Long getTimeStart(){
 			return timeStart;
 		}
 
-		public void setTimeStart(Long timeStart) {
+		public void setTimeStart(Long timeStart){
 			this.timeStart = timeStart;
 		}
 
-		public Long getTimeEnd() {
+		public Long getTimeEnd(){
 			return timeEnd;
 		}
 
-		public void setTimeEnd(Long timeEnd) {
+		public void setTimeEnd(Long timeEnd){
 			this.timeEnd = timeEnd;
 		}
 
-		public Long getTimeSave() {
+		public Long getTimeSave(){
 			return timeSave;
 		}
 
-		public void setTimeSave(Long timeSave) {
+		public void setTimeSave(Long timeSave){
 			this.timeSave = timeSave;
 		}
 
-		public Long getTimeDelay() {
+		public Long getTimeDelay(){
 			return timeDelay;
 		}
 
-		public void setTimeDelay(Long timeDelay) {
+		public void setTimeDelay(Long timeDelay){
 			this.timeDelay = timeDelay;
 		}
 
-		public Integer getRetryCount() {
+		public Integer getRetryCount(){
 			return retryCount;
 		}
 
-		public void setRetryCount(Integer retryCount) {
+		public void setRetryCount(Integer retryCount){
 			this.retryCount = retryCount;
 		}
 	}

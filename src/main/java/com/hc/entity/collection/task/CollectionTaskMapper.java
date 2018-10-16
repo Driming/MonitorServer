@@ -13,8 +13,7 @@ public interface CollectionTaskMapper {
 	List<CollectionTask> selectAllNotLabelTasks(
 			@Param("isUsed")Integer isUsed);
 
-	List<CollectionTask> selectCollectionTasks(
-			@Param("csid")String csid, @Param("label")String label,
+	List<CollectionTask> selectCollectionTasks(@Param("csid")String csid, @Param("label")String label,
 			@Param("driverName")String driverName, @Param("driverVersion")String driverVersion,
 			@Param("isUsed")Integer isUsed);
 	

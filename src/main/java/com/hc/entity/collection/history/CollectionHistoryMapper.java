@@ -14,13 +14,13 @@ import com.hc.vo.TaskScheduleVo;
 
 public interface CollectionHistoryMapper {
 	int insertCollectionHistory(CollectionHistory ch);
-	
+
 	int updateCollectionHistorySelective(CollectionHistory ch);
-	
+
 	int upsert(CollectionHistory ch);
 	
 	Map<String, Long> selectAllServerMaxTime();
-	
+
 	CollectionHistory selectCollectionHistory(
 			@Param("ctid")String ctid, @Param("csid")String csid,
 			@Param("time")Long time);

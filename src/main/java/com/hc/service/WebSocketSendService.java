@@ -90,7 +90,7 @@ public class WebSocketSendService{
 		template.convertAndSend("/user/" + csid + "/query_record", synchronizeJson.toString());
 	}
 
-	//发送控制系统信息
+	//发送控制系统 信息
 	public void controlCollectDispatchSystem(String csid, String command){
 		JSONObject controlSystemJson = new JSONObject();
 		controlSystemJson.put("command", command);

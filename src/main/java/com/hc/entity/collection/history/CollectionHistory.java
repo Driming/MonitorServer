@@ -8,26 +8,26 @@ import com.hc.entity.collection.task.CollectionTask;
 
 @JsonInclude(Include.NON_NULL)
 public class CollectionHistory {
+
 	public static class Error {
-		private String filename;
-		private String exception;
+		private String fileName;
+		private String Exception;
 
 		public String getException() {
-			return exception;
+			return Exception;
 		}
 
-		public void setException(String exception) {
-			this.exception = exception;
+		public void setException(String Exception) {
+			this.Exception = Exception;
 		}
 
-		public String getFilename() {
-			return filename;
+		public String getFileName() {
+			return fileName;
 		}
 
-		public void setFilename(String filename) {
-			this.filename = filename;
+		public void setFileName(String fileName) {
+			this.fileName = fileName;
 		}
-
 	}
 
 	private String ctid;

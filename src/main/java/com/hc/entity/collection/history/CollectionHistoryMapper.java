@@ -12,6 +12,7 @@ import com.hc.vo.MultiConditionVo;
 import com.hc.vo.TaskHistoryPageInfoVo;
 import com.hc.vo.TaskScheduleVo;
 
+
 public interface CollectionHistoryMapper {
 	int insertCollectionHistory(CollectionHistory ch);
 

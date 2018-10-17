@@ -199,6 +199,14 @@
 
 	<build>
 		<finalName>bigdata</finalName>
+        <resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -206,6 +214,19 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<webResources>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>webapp</directory>
+						</resource>
+					</webResources>
 				</configuration>
 			</plugin>
 		</plugins>

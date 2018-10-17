@@ -174,7 +174,7 @@ public class MonitorTask {
 		int isUsedCs = 1;
 		long starttime = 0;
 		short type = ServerMap.COLLECT_SERVER;
-		Map<String, Object> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
+		Map<String, Long> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
 		List<CollectionServer> collectionServers = collectionMonitorDao.findCollectionServers(isUsedCs, type);
 		for (CollectionServer collectionServer : collectionServers) {
 			String csid = collectionServer.getCsid();

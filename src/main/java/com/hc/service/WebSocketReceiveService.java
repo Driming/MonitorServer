@@ -91,7 +91,7 @@ public class WebSocketReceiveService {
 				receiveRecord(rvs.get(i), principal);
 			}
 			// 继续请求获取记录
-			Map<String, Object> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
+			Map<String, Long> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
 			webSocketSendService.synchronizeTaskHistory(principal.getName(),
 					Long.parseLong(serverMaxTimes.get(principal.getName()).toString()));
 		}

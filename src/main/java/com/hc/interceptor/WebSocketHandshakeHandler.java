@@ -35,7 +35,7 @@ public class WebSocketHandshakeHandler extends TextWebSocketHandler {
 		short type = ServerMap.COLLECT_SERVER;
 		CollectionMonitorDao collectionMonitorDao = (CollectionMonitorDao) ContextCore.getBean(CollectionMonitorDao.class);
 		WebSocketSendService webSocketSendService = (WebSocketSendService) ContextCore.getBean(WebSocketSendService.class);
-		Map<String, Object> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
+		Map<String, Long> serverMaxTimes = collectionMonitorDao.selectCollectionHistoryServerMaxTime();
 		List<CollectionServer> collectionServers = collectionMonitorDao.findCollectionServers(isUsedCs, type);
 		for (CollectionServer collectionServer : collectionServers) {
 			String csid = collectionServer.getCsid();

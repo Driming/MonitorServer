@@ -292,14 +292,8 @@ public class CollectionMonitorDao {
 		return collectionHistoryMapper.updateCollectionHistorySelective(ch);
 	}
 	
-	public Map<String, Object> selectCollectionHistoryServerMaxTime(){
-		MapResultHandler mapResultHandler = new MapResultHandler();
-		SqlSession openSession = sqlSessionFactory.openSession();
-		openSession.select(
-				"com.hc.entity.collection.history.CollectionHistoryMapper.selectAllServerMaxTime",
-				mapResultHandler);
-		openSession.close();
-		return mapResultHandler.getMappedResults();
+	public Map<String, Long> selectCollectionHistoryServerMaxTime(){
+		return collectionHistoryMapper.selectAllServerMaxTime();
 	}
 	
 	public List<Long> findTaskHistoryDayInfo(String ctid, String csid, long time, Integer totalPage) {
